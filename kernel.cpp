@@ -44,17 +44,17 @@ cl_context CreateContext(
 
     cerr << endl;
   }
-  cerr << "HH1" << endl;
-  cerr << "devices=" << devices << endl;
-  cerr << "numDevices=" << numDevices << endl;
+  //cerr << "HH1" << endl;
+  //cerr << "devices=" << devices << endl;
+  //cerr << "numDevices=" << numDevices << endl;
 
   CheckError( clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, maxDevices, devices, &numDevices));
-  cerr << "HH2" << endl;
-  cerr << "numDevices=" << numDevices << endl;
+  //cerr << "HH2" << endl;
+  //cerr << "numDevices=" << numDevices << endl;
 
   int err;
   cl_context ret = clCreateContext(NULL, 1, devices, &pfn_notify, NULL, &err);
-  cerr << "HH3" << endl;
+  //cerr << "HH3" << endl;
   CheckError(err);
 
   /*
@@ -65,12 +65,12 @@ cl_context CreateContext(
       NULL,  // user data for callback
       NULL); // error code
   */
-  cerr << "HH4" << endl;
+  //cerr << "HH4" << endl;
   if (!ret) {
     printf("Error: Failed to create a compute context!\n");
     abort();
   }
-  cerr << "HH5" << endl;
+  //cerr << "HH5" << endl;
 
   return ret;
 }
@@ -158,12 +158,13 @@ cl_kernel CreateKernel(const std::string &kernelName, const OpenCLInfo &openCLIn
 {
   // Create the compute kernel in the program we wish to run
   //
+  cerr << "CreateKernel1=" << kernelName << endl;
   cl_int err;                            // error code returned from api calls
   cl_kernel kernel;                   // compute kernel
   kernel = clCreateKernel(openCLInfo.program, kernelName.c_str(), &err);
   CheckError(err);
   assert(kernel);
-  cerr << "CreateKernel=" << kernelName << endl;
+  cerr << "CreateKernel2=" << kernelName << endl;
 
   return kernel;
 }

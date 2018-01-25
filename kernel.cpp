@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cassert>
 #include "kernel.h"
-#include "debug-devices.cpp"
+#include "debug-devices.h"
 #include "scoped_ptrs.h"
 
 using namespace std;

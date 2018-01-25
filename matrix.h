@@ -34,7 +34,7 @@ public:
   unsigned size() const
   { return size_; }
 
-  void Set(const T *arr, size_t count)
+  void CopyFrom(const T *arr, size_t count)
   {
     assert(count <= size_);
     size_t bytes = count * sizeof(T);
@@ -48,6 +48,16 @@ public:
                     0,
                     NULL,
                     NULL) );
+    CheckError( clFinish(openCLInfo_.commands) );
+  }
+
+  void CopyTo(T *arr, size_t count) const
+  {
+    assert(count <= size_);
+    size_t bytes = count * sizeof(T);
+
+    CheckError( clEnqueueReadBuffer( openCLInfo_.commands, mem_, CL_TRUE, 0, sizeof(T) * size(), arr, 0, NULL, NULL ) );
+
     CheckError( clFinish(openCLInfo_.commands) );
   }
 

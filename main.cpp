@@ -46,11 +46,8 @@ int main()
 
   cerr << "main2" << endl;
 
-  //cl_kernel kernel = CreateKernel("kernels/OutputLayer.cl", "OutputLayer_float", openCLInfo);
-  //cerr << "CreateKernel done" << endl;
-
   CallOpenCL("OutputLayer_float", openCLInfo,
-      W.data(), X.data(), B.data(), Y.data(), X.size());
+      W.data(), X.data(), B.data(), Y.data(), X.dim(1));
 
   cerr << "Finished" << endl;
 }

@@ -158,13 +158,11 @@ cl_kernel CreateKernel(const std::string &kernelName, const OpenCLInfo &openCLIn
 {
   // Create the compute kernel in the program we wish to run
   //
-  cerr << "CreateKernel1=" << kernelName << endl;
   cl_int err;                            // error code returned from api calls
   cl_kernel kernel;                   // compute kernel
   kernel = clCreateKernel(openCLInfo.program, kernelName.c_str(), &err);
   CheckError(err);
   assert(kernel);
-  cerr << "CreateKernel2=" << kernelName << endl;
 
   return kernel;
 }

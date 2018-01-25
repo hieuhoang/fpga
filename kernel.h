@@ -33,7 +33,7 @@ void SetKernelArg(cl_kernel kernel, cl_uint argNum, const T &t, Args... args) //
 
 template<typename... Args>
 void CallOpenCL(
-    const std::string &kernelName,
+    const cl_kernel &kernel,
     const OpenCLInfo &openCLInfo,
     Args... args
     )
@@ -42,17 +42,7 @@ void CallOpenCL(
   size_t global;                      // global domain size for our calculation
   size_t local;                       // local domain size for our calculation
 
-  //std::cerr << "CallOpenCL1" << std::endl;
-  cl_mem output = clCreateBuffer(openCLInfo.context, CL_MEM_WRITE_ONLY, sizeof(size_t), NULL, &err);
-  CheckError(err);
-  assert(output);
-
-  // create kernel
-  //std::cerr << "CallOpenCL2" << std::endl;
-  cl_kernel kernel = CreateKernel(kernelName, openCLInfo);
-
   // Set the arguments to our compute kernel
-  //std::cerr << "CallOpenCL3" << std::endl;
   SetKernelArg(kernel, 0, args...);
 
   // Get the maximum work group size for executing the kernel on the device
@@ -66,14 +56,24 @@ void CallOpenCL(
   //cerr << "local=" << local << endl;
   //cerr << "global=" << global << endl;
 
-  //std::cerr << "CallOpenCL4" << std::endl;
   CheckError( clEnqueueNDRangeKernel(openCLInfo.commands, kernel, 1, NULL, &global, &local, 0, NULL, NULL) );
 
   // Wait for the command commands to get serviced before reading back results
   //
-  //std::cerr << "CallOpenCL5" << std::endl;
   CheckError( clFinish(openCLInfo.commands) );
-  //std::cerr << "CallOpenCL6" << std::endl;
+}
+
+template<typename... Args>
+void CallOpenCL(
+    const std::string &kernelName,
+    const OpenCLInfo &openCLInfo,
+    Args... args
+    )
+{
+  // create kernel
+  //std::cerr << "CallOpenCL2" << std::endl;
+  cl_kernel kernel = CreateKernel(kernelName, openCLInfo);
+  CallOpenCL(kernel, openCLInfo, args...);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

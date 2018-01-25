@@ -23,8 +23,8 @@ int main()
   openCLInfo.commands = CreateCommandQueue(openCLInfo);
   cerr << "CreateCommandQueue done" << endl;
 
-  cl_kernel kernel = CreateKernel("kernels/OutputLayer.cl", "OutputLayer_float", openCLInfo);
-  cerr << "CreateKernel done" << endl;
+  //cl_kernel kernel = CreateKernel("kernels/OutputLayer.cl", "OutputLayer_float", openCLInfo);
+  //cerr << "CreateKernel done" << endl;
 
   Matrix<float> W(openCLInfo, true, 85000, 512);
   Matrix<float> X(openCLInfo, true, 512, 640);

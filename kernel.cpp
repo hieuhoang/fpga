@@ -40,15 +40,21 @@ cl_context CreateContext(
     CheckError( clGetPlatformInfo(platformIds[i], CL_PLATFORM_EXTENSIONS, 10240, buffer, NULL));
     cerr << " extension=" << buffer;
 
-    DebugDevicesInfo(platformIds[i]);
+    //DebugDevicesInfo(platformIds[i]);
 
     cerr << endl;
   }
+  cerr << "HH1" << endl;
+  cerr << "devices=" << devices << endl;
+  cerr << "numDevices=" << numDevices << endl;
 
   CheckError( clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, maxDevices, devices, &numDevices));
+  cerr << "HH2" << endl;
+  cerr << "numDevices=" << numDevices << endl;
 
   int err;
   cl_context ret = clCreateContext(NULL, 1, devices, &pfn_notify, NULL, &err);
+  cerr << "HH3" << endl;
   CheckError(err);
 
   /*
@@ -59,10 +65,12 @@ cl_context CreateContext(
       NULL,  // user data for callback
       NULL); // error code
   */
+  cerr << "HH4" << endl;
   if (!ret) {
     printf("Error: Failed to create a compute context!\n");
     abort();
   }
+  cerr << "HH5" << endl;
 
   return ret;
 }

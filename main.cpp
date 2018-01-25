@@ -20,11 +20,6 @@ int main()
   cerr << "CreateContext done" << endl;
 
   openCLInfo.device = openCLInfo.devices[0];
-  openCLInfo.commands = CreateCommandQueue(openCLInfo);
-  cerr << "CreateCommandQueue done" << endl;
-
-  //cl_kernel kernel = CreateKernel("kernels/OutputLayer.cl", "OutputLayer_float", openCLInfo);
-  //cerr << "CreateKernel done" << endl;
 
   Matrix<float> W(openCLInfo, true, 85000, 512);
   Matrix<float> X(openCLInfo, true, 512, 640);
@@ -41,6 +36,12 @@ int main()
 
   vec.resize(B.size(), 9.3443);
   B.Set(vec.data(), vec.size());
+
+  openCLInfo.commands = CreateCommandQueue(openCLInfo);
+  cerr << "CreateCommandQueue done" << endl;
+
+  //cl_kernel kernel = CreateKernel("kernels/OutputLayer.cl", "OutputLayer_float", openCLInfo);
+  //cerr << "CreateKernel done" << endl;
 
   CallOpenCL("kernels/OutputLayer.cl", "sum_float", openCLInfo,
       X.data(), Y.data(), X.size());

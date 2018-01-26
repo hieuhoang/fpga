@@ -11,7 +11,7 @@ __kernel void OutputLayer_float(
 				__global float * restrict W,
 				__global float * restrict X,
 				__global float * restrict B,
-				__global struct MaxY_type * restrict MaxY, 
+				__global uint2 * restrict MaxY, //one of fields will actually hold float
 				unsigned batchsize
                   )
 {
@@ -20,7 +20,7 @@ __kernel void OutputLayer_float(
 #endif
 
 	__global volatile float16* restrict ddr_access_pointer;
-	__global volatile struct MaxY_type* restrict MaxYpointer;
+	__global volatile uint2* restrict MaxYpointer;
 	__global volatile float16* restrict Wpointer_prev;
 	__global volatile float16* restrict Bpointer_prev;
 
@@ -41,7 +41,6 @@ __kernel void OutputLayer_float(
 #if EMULATOR == 1
     printf("OpenCL: MaxY values initialized to %f \n",-MAXFLOAT);
 #endif	
-	
 	for (unsigned tile=0; tile < TILECOUNT; tile++) {
 #if EMULATOR == 1
     printf("OpenCL: tile=%d \n",tile);
@@ -89,7 +88,7 @@ __kernel void OutputLayer_float(
 			for (short pr=0; pr < P; pr++) { 
 				ylocal[pr]=0.0f;
 			}
-			//#pragma max_concurreny 1
+			
 			for (unsigned xi=0; xi < LAYER_DIM>>4; xi++) { //read 16 numbers at a time
 				float16 xval= *Xpointer;
 				#pragma unroll
@@ -126,11 +125,11 @@ __kernel void OutputLayer_float(
 	
 	} //tile
 	
-	MaxYpointer = (__global volatile struct MaxY_type *)MaxY;
+	MaxYpointer = (__global volatile uint2 *)MaxY;
 	
 	for (short mi=0; mi < batchsize; mi++) {
-		*MaxYpointer = MaxYlocal[mi];
-		*MaxYpointer++;
+		*MaxYpointer = (uint2)(as_uint(MaxYlocal[mi].MaxVal), MaxYlocal[mi].index) ;
+		MaxYpointer++;
 	}
 
 }

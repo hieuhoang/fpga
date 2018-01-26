@@ -29,7 +29,7 @@ __kernel void OutputLayer_float(
 	__global volatile float16* restrict Wpointer_prev;
 	__global volatile float16* restrict Bpointer_prev;
 
-    float Wlocal[P][LAYER_DIM];
+    float16 Wlocal[LAYER_DIM>>4][P]  __attribute__((numbanks(P), bankwidth(64)));
     float Blocal[P];
 
 
@@ -47,10 +47,11 @@ __kernel void OutputLayer_float(
 	
 			float16 temp_val = *ddr_access_pointer;
 			if (i < WLOADTIME) {
-				#pragma unroll 
-				for (char u=0; u < 16; u++) {
-					Wlocal[wr_index >> 5][(wr_index & 0x1F)*16+u]=temp_val[u]; // good for LAYER_DIM 512 (512/16=32)
-				}
+				//#pragma unroll 
+				//for (char u=0; u < 16; u++) {
+				//	Wlocal[wr_index >> 5][(wr_index & 0x1F)*16+u]=temp_val[u]; // good for LAYER_DIM 512 (512/16=32)
+				//}
+				Wlocal[wr_index & 0x1F][wr_index >> 5]=temp_val;
 				wr_index++;
 			}
 			else {
@@ -84,7 +85,7 @@ __kernel void OutputLayer_float(
 				for (short pi=0; pi < P; pi++) { 
 					#pragma unroll
 					for (char u=0; u < 16; u++) {
-						ylocal[pi] += xval[u]*Wlocal[pi][xi*16+u];
+						ylocal[pi] += xval[u]*Wlocal[xi][pi][u];
 					}
 				}
 				Xpointer++;
@@ -92,7 +93,7 @@ __kernel void OutputLayer_float(
 			//now you have P instances of Y elements ready from the same column xj
 			float16 yaddb[P>>4];
 			#pragma unroll 1
-			for (short pb=0; pb < P<<4; pb++) {
+			for (short pb=0; pb < P>>4; pb++) {
 				#pragma unroll
 				for (char u=0; u < 16; u++) {
 					yaddb[pb][u]=ylocal[pb*16+u] + Blocal[pb*16+u];

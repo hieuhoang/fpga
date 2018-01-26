@@ -5,4 +5,4 @@ emu: OutputLayer.cl
 
 rtl: OutputLayer.cl
 	aoc -c -v -fpc -fp-relaxed OutputLayer.cl 
-
+	firefox OutputLayer/reports/report.html &

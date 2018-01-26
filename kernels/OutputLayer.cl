@@ -31,7 +31,7 @@ __kernel void OutputLayer_float(
 	Wpointer_prev = (__global volatile float16 *)W;
 	Bpointer_prev = (__global volatile float16 *)B;
 	
-	MaxYpointer = (__global volatile struct MaxY_type *)MaxY;
+
 	struct MaxY_type MaxYlocal[MAXBATCH];
 	#pragma unroll 1
 	for (short mi=0; mi < batchsize; mi++){
@@ -122,10 +122,16 @@ __kernel void OutputLayer_float(
 					}
 				}
 			}
-		}
+		} //xj
 	
+	} //tile
+	
+	MaxYpointer = (__global volatile struct MaxY_type *)MaxY;
+	
+	for (short mi=0; mi < batchsize; mi++) {
+		*MaxYpointer = MaxYlocal[mi];
+		*MaxYpointer++;
 	}
-		
 
 }
 	

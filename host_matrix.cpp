@@ -28,7 +28,7 @@ void Debug(HostMatrix<MaxY_type> &matrix)
 void Random(HostMatrix<float> &matrix)
 {
   for (unsigned i = 0; i < matrix.size(); ++i) {
-    matrix[i] = rand() * 1;
+    matrix[i] = ((double) rand() / (RAND_MAX));
   }
 }
 

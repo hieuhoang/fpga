@@ -40,10 +40,17 @@ int main()
   init.index = 9999;
   h_maxY.Set(init);
 
+  ///*
   srand (time(NULL));
   Random(h_W);
   Random(h_X);
   Random(h_B);
+  //*/
+  /*
+  h_W.Set(1);
+  h_X.Set(1);
+  h_B.Set(1);
+  */
 
   Matrix<float> W(openCLInfo, rowMajor, h_W);
   Matrix<float> X(openCLInfo, colMajor, h_X);

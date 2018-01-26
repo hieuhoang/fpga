@@ -4,6 +4,7 @@
 
 #define VOCABSIZE 384  //good multiple of 16 and 128
 #define LAYER_DIM 512 // assuming to be multiple of 16
+#define MAXBATCH 1000
 
 #define P 16 //should be multiple 16 for B loading logic to work
 #define TILECOUNT (VOCABSIZE / P) //VOCABSIZE will be a good multiple of P 
@@ -11,12 +12,18 @@
 #define WLOADTIME ((P * LAYER_DIM) >> 4) //using float16
 #define BLOADTIME (P >> 4) //using float16
 
+struct MaxY_type
+{
+	float MaxVal;
+    unsigned index;
+};
+
 __attribute__((max_global_work_dim(0)))
 __kernel void OutputLayer_float(
 				__global float * restrict W,
 				__global float * restrict X,
 				__global float * restrict B,
-				__global float * restrict Y,
+				__global struct MaxY_type * restrict MaxY, 
 				unsigned batchsize
                   )
 {
@@ -25,18 +32,27 @@ __kernel void OutputLayer_float(
 #endif
 
 	__global volatile float16* restrict ddr_access_pointer;
-	__global volatile float16* restrict Ypointer;
+	__global volatile struct MaxY_type* restrict MaxYpointer;
 	__global volatile float16* restrict Wpointer_prev;
 	__global volatile float16* restrict Bpointer_prev;
 
-    float16 Wlocal[LAYER_DIM>>4][P]  __attribute__((numbanks(P), bankwidth(64)));
+    float16 Wlocal[LAYER_DIM>>4][P]  __attribute__((numbanks(P), bankwidth(64))); //64 bytes = float16 bytesize
     float Blocal[P];
 
 
 	Wpointer_prev = (__global volatile float16 *)W;
 	Bpointer_prev = (__global volatile float16 *)B;
 	
-	Ypointer = (__global volatile float16 *)Y;
+	MaxYpointer = (__global volatile struct MaxY_type *)MaxY;
+	struct MaxY_type MaxYlocal[MAXBATCH];
+	#pragma unroll 1
+	for (short mi=0; mi < batchsize; mi++){
+		MaxYlocal[mi].MaxVal=-MAXFLOAT;
+		MaxYlocal[mi].index=VOCABSIZE+100; //you can get rid of this later
+	}
+#if EMULATOR == 1
+    printf("OpenCL: MaxY values initialized to %f \n",-MAXFLOAT);
+#endif	
 	
 	for (unsigned tile=0; tile < TILECOUNT; tile++) {
 #if EMULATOR == 1
@@ -85,6 +101,7 @@ __kernel void OutputLayer_float(
 			for (short pr=0; pr < P; pr++) { 
 				ylocal[pr]=0.0f;
 			}
+			//#pragma max_concurreny 1
 			for (unsigned xi=0; xi < LAYER_DIM>>4; xi++) { //read 16 numbers at a time
 				float16 xval= *Xpointer;
 				#pragma unroll
@@ -100,15 +117,22 @@ __kernel void OutputLayer_float(
 			float16 yaddb[P>>4];
 			#pragma unroll 1
 			for (short pb=0; pb < P>>4; pb++) {
-				#pragma unroll
 #if EMULATOR == 1
         //printf("OpenCL: pb=%d \n",pb);
 #endif
+				#pragma unroll
 				for (char u=0; u < 16; u++) {
 					yaddb[pb][u]=ylocal[pb*16+u] + Blocal[pb*16+u];
 				}				 
-				*Ypointer = yaddb[pb];
-				Ypointer++;
+				//*Ypointer = yaddb[pb];
+				//Ypointer++;
+				#pragma unroll 1
+				for (char u=0; u < 16; u++) {
+					if (yaddb[pb][u] > MaxYlocal[xj].MaxVal) {
+						MaxYlocal[xj].MaxVal = yaddb[pb][u];
+						MaxYlocal[xj].index  = tile * P + pb*16 + u;
+					}
+				}
 			}
 		}
 	

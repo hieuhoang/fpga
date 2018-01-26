@@ -39,6 +39,9 @@ __kernel void OutputLayer_float(
 	Ypointer = (__global volatile float16 *)Y;
 	
 	for (unsigned tile=0; tile < TILECOUNT; tile++) {
+#if EMULATOR == 1
+    printf("OpenCL: tile=%d \n",tile);
+#endif
 		ddr_access_pointer = (__global volatile float16 *)Wpointer_prev;
 	
 		unsigned wr_index=0;
@@ -75,6 +78,9 @@ __kernel void OutputLayer_float(
 		__global volatile float16* restrict Xpointer;
 		Xpointer = (__global volatile float16 *)X;
 		for (unsigned xj=0; xj < batchsize; xj++) { 
+#if EMULATOR == 1
+      //printf("OpenCL: xj=%d \n",xj);
+#endif
 			float ylocal[P]; //non-initialized
 			for (short pr=0; pr < P; pr++) { 
 				ylocal[pr]=0.0f;
@@ -95,6 +101,9 @@ __kernel void OutputLayer_float(
 			#pragma unroll 1
 			for (short pb=0; pb < P>>4; pb++) {
 				#pragma unroll
+#if EMULATOR == 1
+        //printf("OpenCL: pb=%d \n",pb);
+#endif
 				for (char u=0; u < 16; u++) {
 					yaddb[pb][u]=ylocal[pb*16+u] + Blocal[pb*16+u];
 				}				 

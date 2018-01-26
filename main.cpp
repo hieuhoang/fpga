@@ -6,9 +6,9 @@
 #include "types-fpga.h"
 #include "kernel.h"
 #include "matrix.h"
+#include "host_matrix.h"
+#include "const.h"
 
-#define VOCABSIZE 384  //good multiple of 16 and 128
-#define LAYER_DIM 512 // assuming to be multiple of 16
 
 using namespace std;
 
@@ -30,10 +30,20 @@ int main()
   CreateProgram(openCLInfo, "kernels/fpga.aocx");
   cerr << "CreateProgram done" << endl;
 
-  Matrix<float> W(openCLInfo, true, VOCABSIZE, LAYER_DIM);
-  Matrix<float> X(openCLInfo, true, LAYER_DIM, 640);
-  Matrix<float> B(openCLInfo, true, 1, VOCABSIZE);
-  Matrix<float> Y(openCLInfo, true, VOCABSIZE, 640);
+  HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
+  HostMatrix<float> h_X(LAYER_DIM, 640);
+  HostMatrix<float> h_B(1, VOCABSIZE);
+  HostMatrix<float> h_Y(VOCABSIZE, 640);
+
+  h_W.Set(43.232);
+  h_X.Set(67.2);
+  h_B.Set(125.87);
+  h_Y.Set(8.55);
+
+  Matrix<float> W(openCLInfo, true, h_W);
+  Matrix<float> X(openCLInfo, true, h_X);
+  Matrix<float> B(openCLInfo, true, h_B);
+  Matrix<float> Y(openCLInfo, true, h_Y);
 
   vector<float> vec;
   
@@ -67,6 +77,8 @@ int main()
     cerr << vec[i] << " ";
   }  
   cerr << endl;
+
+  Affine(h_Y, h_W, h_X, h_B);
 
   cerr << "Finished" << endl;
 }

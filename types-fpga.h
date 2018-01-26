@@ -29,6 +29,7 @@ struct OpenCLInfo
   cl_device_id devices[100];
   cl_device_id device;
   cl_command_queue commands;
+  cl_program program;
 };
 
 

@@ -7,10 +7,14 @@ cl_context CreateContext(
     cl_device_id *devices,
     cl_uint &numDevices);
 
-cl_kernel CreateKernel(const std::string &filePath, const std::string &kernelName, const OpenCLInfo &openCLInfo);
+void CreateProgram(OpenCLInfo &openCLInfo, const std::string &filePath);
+
+cl_kernel CreateKernel(const std::string &kernelName, const OpenCLInfo &openCLInfo);
 cl_command_queue CreateCommandQueue(const OpenCLInfo &openCLInfo);
 
-/////////////////////////////////////////////////////////////////////////////////////
+unsigned char *loadBinaryFile(const char *file_name, size_t *size);
+
+//////////////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void SetKernelArg(cl_kernel kernel, cl_uint argNum, const T &t)
 {
@@ -29,8 +33,7 @@ void SetKernelArg(cl_kernel kernel, cl_uint argNum, const T &t, Args... args) //
 
 template<typename... Args>
 void CallOpenCL(
-    const std::string &filePath,
-    const std::string &kernelName,
+    const cl_kernel &kernel,
     const OpenCLInfo &openCLInfo,
     Args... args
     )
@@ -38,13 +41,6 @@ void CallOpenCL(
   cl_int err;
   size_t global;                      // global domain size for our calculation
   size_t local;                       // local domain size for our calculation
-
-  cl_mem output = clCreateBuffer(openCLInfo.context, CL_MEM_WRITE_ONLY, sizeof(size_t), NULL, &err);
-  CheckError(err);
-  assert(output);
-
-  // create kernel
-  cl_kernel kernel = CreateKernel(filePath, kernelName, openCLInfo);
 
   // Set the arguments to our compute kernel
   SetKernelArg(kernel, 0, args...);
@@ -65,9 +61,20 @@ void CallOpenCL(
   // Wait for the command commands to get serviced before reading back results
   //
   CheckError( clFinish(openCLInfo.commands) );
-
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
+template<typename... Args>
+void CallOpenCL(
+    const std::string &kernelName,
+    const OpenCLInfo &openCLInfo,
+    Args... args
+    )
+{
+  // create kernel
+  //std::cerr << "CallOpenCL2" << std::endl;
+  cl_kernel kernel = CreateKernel(kernelName, openCLInfo);
+  CallOpenCL(kernel, openCLInfo, args...);
+}
 
+//////////////////////////////////////////////////////////////////////////////////////
 

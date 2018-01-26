@@ -6,6 +6,7 @@
 #include "types-fpga.h"
 #include "kernel.h"
 #include "matrix.h"
+#include "host_matrix.h"
 
 #define VOCABSIZE 384  //good multiple of 16 and 128
 #define LAYER_DIM 512 // assuming to be multiple of 16
@@ -29,6 +30,9 @@ int main()
 
   CreateProgram(openCLInfo, "kernels/fpga.aocx");
   cerr << "CreateProgram done" << endl;
+
+  HostMatrix<float> hostW(VOCABSIZE, LAYER_DIM);
+
 
   Matrix<float> W(openCLInfo, true, VOCABSIZE, LAYER_DIM);
   Matrix<float> X(openCLInfo, true, LAYER_DIM, 640);

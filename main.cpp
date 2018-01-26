@@ -31,7 +31,7 @@ int main()
   CreateProgram(openCLInfo, "kernels/fpga.aocx");
   cerr << "CreateProgram done" << endl;
 
-  HostMatrix<float> hostW(VOCABSIZE, LAYER_DIM);
+  HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
 
 
   Matrix<float> W(openCLInfo, true, VOCABSIZE, LAYER_DIM);

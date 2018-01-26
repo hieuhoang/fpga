@@ -56,8 +56,8 @@ int main()
 						X.dim(1));
   CheckError( clFinish(openCLInfo.commands) );
 
-  
-  Debug(h_Y);
+  maxY.CopyTo(h_maxY);
+  Debug(h_maxY);
 
   cerr << "HOST:" << endl;
   Affine(h_Y, h_W, h_X, h_B);

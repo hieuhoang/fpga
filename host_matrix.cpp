@@ -14,6 +14,18 @@ void Debug(HostMatrix<float> &matrix)
   }  
 }
 
+void Debug(HostMatrix<MaxY_type> &matrix)
+{
+  for (unsigned row = 0; row < matrix.dim(0); ++row) {
+    for (unsigned col = 0; col < matrix.dim(1); ++col) {
+      const MaxY_type &val = matrix(row, col);
+      cerr << "(" << val.MaxVal << "," << val.index << ") ";
+    }
+    cerr << endl;
+  }  
+}
+
+
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 {
   assert(Y.dim(0) == W.dim(0));

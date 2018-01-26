@@ -53,10 +53,13 @@ public:
   {
     size_t bytes = size() * sizeof(T);
 
-    T *arr;
-    CheckError( clEnqueueReadBuffer( openCLInfo_.commands, mem_, CL_TRUE, 0, sizeof(T) * size(), arr, 0, NULL, NULL ) );
+    std::vector<T> vec(size());
 
+    CheckError( clEnqueueReadBuffer( openCLInfo_.commands, mem_, CL_TRUE, 0, sizeof(T) * size(), vec.data(), 0, NULL, NULL ) );
     CheckError( clFinish(openCLInfo_.commands) );
+
+    h_matrix.CopyFrom(vec.data(), indexType_);
+
   }
 
 protected:

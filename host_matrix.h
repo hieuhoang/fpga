@@ -1,6 +1,7 @@
 #pragma once
 #include <cassert>
 #include <vector>
+#include "const.h"
 
 enum MatrixIndexType
 {
@@ -117,12 +118,13 @@ public:
 protected:
   unsigned dim_[2];
   unsigned size_;
-	std::vector<float> data_;
+	std::vector<T> data_;
 };
 
 /////////////////////////////////////////////////////
 
 void Debug(HostMatrix<float> &matrix);
+void Debug(HostMatrix<MaxY_type> &matrix);
 
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B);
 

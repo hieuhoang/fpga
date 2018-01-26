@@ -37,11 +37,17 @@ public:
     return data_[id];
   }
 
-  std::vector<T> Get(MatrixIndexType indexType)
+  std::vector<T> Get(MatrixIndexType indexType) const
   {
     std::vector<T> ret(size());
     assert(indexType != fpgaSpecific);
 
+    for (unsigned row = 0; row < dim(0); ++row) {
+      for (unsigned col = 0; col < dim(1); ++col) {
+				unsigned id = indices2Id(indexType, row, col);
+        ret[id] = (*this)(row, col);
+      }
+    }
 
     return ret;
   }

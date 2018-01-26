@@ -1,6 +1,7 @@
 #pragma once
 #include <cassert>
 #include "types-fpga.h"
+#include "host_matrix.h"
 
 template<typename T>
 class Matrix
@@ -8,8 +9,8 @@ class Matrix
 public:
   Matrix(const OpenCLInfo &openCLInfo, bool rowMajor, unsigned a, unsigned b)
   :openCLInfo_(openCLInfo)
+  ,rowMajor_(rowMajor)
   {
-    rowMajor_ = rowMajor;
     dim_[0] = a;
     dim_[1] = b;
     size_ = a * b;
@@ -17,6 +18,20 @@ public:
     cl_int err;
     mem_ = clCreateBuffer(openCLInfo.context,  CL_MEM_READ_WRITE,  sizeof(T) * size(), NULL, &err);
     CheckError(err);
+  }
+
+  Matrix(const OpenCLInfo &openCLInfo, bool rowMajor, const HostMatrix<T> &h_matrix)
+  :openCLInfo_(openCLInfo)
+  ,rowMajor_(rowMajor)
+  {
+    dim_[0] = h_matrix.dim(0);
+    dim_[1] = h_matrix.dim(1);
+    size_ = h_matrix.size();
+
+    cl_int err;
+    mem_ = clCreateBuffer(openCLInfo.context,  CL_MEM_READ_WRITE,  sizeof(T) * size(), NULL, &err);
+    CheckError(err);
+
   }
 
   cl_mem &data()

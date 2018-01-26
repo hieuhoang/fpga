@@ -32,12 +32,15 @@ int main()
   cerr << "CreateProgram done" << endl;
 
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
+  HostMatrix<float> h_X(LAYER_DIM, 640);
+  HostMatrix<float> h_B(1, VOCABSIZE);
+  HostMatrix<float> h_Y(VOCABSIZE, 640);
 
 
-  Matrix<float> W(openCLInfo, true, VOCABSIZE, LAYER_DIM);
-  Matrix<float> X(openCLInfo, true, LAYER_DIM, 640);
-  Matrix<float> B(openCLInfo, true, 1, VOCABSIZE);
-  Matrix<float> Y(openCLInfo, true, VOCABSIZE, 640);
+  Matrix<float> W(openCLInfo, true, h_W);
+  Matrix<float> X(openCLInfo, true, h_X);
+  Matrix<float> B(openCLInfo, true, h_B);
+  Matrix<float> Y(openCLInfo, true, h_Y);
 
   vector<float> vec;
   

@@ -36,6 +36,10 @@ int main()
   HostMatrix<float> h_B(1, VOCABSIZE);
   HostMatrix<float> h_Y(VOCABSIZE, 640);
 
+  h_W.Set(43.232);
+  h_X.Set(67.2);
+  h_B.Set(125.87);
+  h_Y.Set(8.55);
 
   Matrix<float> W(openCLInfo, true, h_W);
   Matrix<float> X(openCLInfo, true, h_X);

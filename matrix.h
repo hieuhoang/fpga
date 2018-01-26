@@ -10,10 +10,10 @@ public:
   Matrix(const OpenCLInfo &openCLInfo, bool rowMajor, unsigned a, unsigned b)
   :openCLInfo_(openCLInfo)
   ,rowMajor_(rowMajor)
+  ,size_(a * b)
   {
     dim_[0] = a;
     dim_[1] = b;
-    size_ = a * b;
 
     cl_int err;
     mem_ = clCreateBuffer(openCLInfo.context,  CL_MEM_READ_WRITE,  sizeof(T) * size(), NULL, &err);
@@ -23,13 +23,13 @@ public:
   Matrix(const OpenCLInfo &openCLInfo, bool rowMajor, const HostMatrix<T> &h_matrix)
   :openCLInfo_(openCLInfo)
   ,rowMajor_(rowMajor)
+  ,size_(h_matrix.size())
   {
     dim_[0] = h_matrix.dim(0);
     dim_[1] = h_matrix.dim(1);
-    size_ = h_matrix.size();
 
     cl_int err;
-    mem_ = clCreateBuffer(openCLInfo.context,  CL_MEM_READ_WRITE,  sizeof(T) * size(), NULL, &err);
+    mem_ = clCreateBuffer(openCLInfo.context,  CL_MEM_COPY_HOST_PTR,  sizeof(T) * size(), (void*) h_matrix.data(), &err);
     CheckError(err);
 
   }

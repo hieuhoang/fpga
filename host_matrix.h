@@ -19,6 +19,9 @@ public:
     dim_[1] = b;
   }
 
+  const T *data() const
+  { return data_.data(); }
+
   unsigned dim(unsigned i) const
   { return dim_[i]; }
 
@@ -90,6 +93,14 @@ public:
     assert(out[0] < dim(0));
     assert(out[1] < dim(1));
   }
+
+  void Set(const T &val)
+  {
+    for (unsigned i = 0; i < size(); ++i) {
+      data_[i] = val;
+    }
+  }
+
 
 protected:
   unsigned dim_[2];

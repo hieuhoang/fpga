@@ -1,11 +1,5 @@
 #include "../const.h"
 
-struct MaxY_type
-{
-	float MaxVal;
-    unsigned index;
-};
-
 __attribute__((max_global_work_dim(0)))
 __kernel void OutputLayer_float(
 				__global float * restrict W,

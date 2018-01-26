@@ -34,6 +34,7 @@ int main()
   HostMatrix<float> h_X(LAYER_DIM, 640);
   HostMatrix<float> h_B(VOCABSIZE, 1);
   HostMatrix<float> h_Y(VOCABSIZE, 640);
+  HostMatrix<MaxY_type> h_maxY(1, 640);
 
   h_W.Set(43.232);
   h_X.Set(67.2);
@@ -42,18 +43,18 @@ int main()
 
   Matrix<float> W(openCLInfo, rowMajor, h_W);
   Matrix<float> X(openCLInfo, colMajor, h_X);
-  Matrix<float> B(openCLInfo, colMajor, h_B);
+  Matrix<float> B(openCLInfo, rowMajor, h_B);
+  Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, 640);
 
   cerr << "FPGA:" << endl;
   cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
-  for (size_t i = 0; i < 1; ++i) {
-    //CallOpenCL("OutputLayer_float", openCLInfo,
-    //    W.data(), X.data(), B.data(), Y.data(), X.dim(1));
-
-    //CallOpenCL(kernel, openCLInfo,
-    //    W.data(), X.data(), B.data(), Y.data(), X.dim(1));
-    //CheckError( clFinish(openCLInfo.commands) );
-  }
+  CallOpenCL(kernel, openCLInfo,
+  			    W.data(), 
+						X.data(), 
+						B.data(), 
+						maxY.data(),
+						X.dim(1));
+  CheckError( clFinish(openCLInfo.commands) );
 
   
   Debug(h_Y);

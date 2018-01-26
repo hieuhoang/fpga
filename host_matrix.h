@@ -29,6 +29,18 @@ public:
   unsigned size() const
   { return size_; }
 
+  const T &operator[](unsigned id) const
+  {
+    assert(id < size());
+    return data_[id];
+  }
+
+  T &operator[](unsigned id)
+  {
+    assert(id < size());
+    return data_[id];
+  }
+
   const T &operator()(unsigned row, unsigned col) const
   {
     unsigned id = indices2Id(rowMajor, row, col);
@@ -105,8 +117,9 @@ protected:
 void Debug(HostMatrix<float> &matrix);
 void Debug(HostMatrix<MaxY_type> &matrix);
 
+void Random(HostMatrix<float> &matrix);
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B);
-
+void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y);
 
 
 

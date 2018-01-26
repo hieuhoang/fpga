@@ -33,18 +33,17 @@ int main()
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
   HostMatrix<float> h_X(LAYER_DIM, 640);
   HostMatrix<float> h_B(VOCABSIZE, 1);
-  HostMatrix<float> h_Y(VOCABSIZE, 640);
   HostMatrix<MaxY_type> h_maxY(1, 640);
 
   MaxY_type init;
   init.MaxVal = 3423;
   init.index = 9999;
-
-  h_W.Set(43.232);
-  h_X.Set(67.2);
-  h_B.Set(125.87);
-  h_Y.Set(8.55);
   h_maxY.Set(init);
+
+  srand (time(NULL));
+  Random(h_W);
+  Random(h_X);
+  Random(h_B);
 
   Matrix<float> W(openCLInfo, rowMajor, h_W);
   Matrix<float> X(openCLInfo, colMajor, h_X);
@@ -66,7 +65,10 @@ int main()
 
   cerr << "HOST:" << endl;
   h_maxY.Set(init);
+  HostMatrix<float> h_Y(VOCABSIZE, 640);
+
   Affine(h_Y, h_W, h_X, h_B);
+  Max(h_maxY, h_Y);
 
   Debug(h_maxY);
 

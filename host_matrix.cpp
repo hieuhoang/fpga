@@ -25,6 +25,12 @@ void Debug(HostMatrix<MaxY_type> &matrix)
   }  
 }
 
+void Random(HostMatrix<float> &matrix)
+{
+  for (unsigned i = 0; i < matrix.size(); ++i) {
+    matrix[i] = rand() * 10;
+  }
+}
 
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 {
@@ -42,6 +48,18 @@ void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<f
         sum += W(rowW, colW) * X(colW, colX);
       }
       Y(rowW, colX) = sum + B(rowW, 0);
+    }
+  }
+}
+
+void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y)
+{
+  assert(maxY.dim(0) == 1);
+  assert(maxY.dim(1) == Y.dim(1));
+
+  for (unsigned col = 0; col < Y.dim(1); ++col) {
+    for (unsigned row = 0; row < Y.dim(0); ++row) {
+
     }
   }
 }

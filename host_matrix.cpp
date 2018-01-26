@@ -28,7 +28,7 @@ void Debug(HostMatrix<MaxY_type> &matrix)
 void Random(HostMatrix<float> &matrix)
 {
   for (unsigned i = 0; i < matrix.size(); ++i) {
-    matrix[i] = rand() * 10;
+    matrix[i] = rand() * 1;
   }
 }
 
@@ -58,9 +58,18 @@ void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y)
   assert(maxY.dim(1) == Y.dim(1));
 
   for (unsigned col = 0; col < Y.dim(1); ++col) {
-    for (unsigned row = 0; row < Y.dim(0); ++row) {
-
+    float max = Y(0, col);
+    unsigned argmax = 0;
+    for (unsigned row = 1; row < Y.dim(0); ++row) {
+      if (max < Y(row, col)) {
+        max = Y(row, col);
+        argmax = row;
+      }
     }
+
+    MaxY_type &ele = maxY[col];
+    ele.MaxVal = max;
+    ele.index = argmax;
   }
 }
 

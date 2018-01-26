@@ -65,12 +65,13 @@ public:
 
   void CopyFrom(const T *arr, MatrixIndexType indexType)
   {
-    for (unsigned i = 0; i < size(); ++i) {
-      const T &val = arr[i];
+    for (unsigned row = 0; row < dim(0); ++row) {
+      for (unsigned col = 0; col < dim(1); ++col) {
+				unsigned id = indices2Id(indexType, row, col);
+        const T &val = arr[id];
       
-      unsigned indices[2];
-      id2Indices(indexType, i, indices);
-      (*this)(indices[0], indices[1]) = val;
+        (*this)(row, col) = val;
+      }
     }
   }
 
@@ -92,28 +93,6 @@ public:
     assert(ind < size());
     return ind;
   }
-
-  void id2Indices(MatrixIndexType indexType, unsigned id, unsigned *out) const
-  {
-    assert(id < size());
-
-    if (indexType == colMajor) {
-      out[0] = id / dim(0);
-      out[1] = id % dim(0);
-    }
-    else if (indexType == rowMajor) {
-      out[1] = id / dim(1);
-      out[0] = id % dim(1);
-    }
-    else {
-      assert(false);
-    }
-
-    assert(out[0] < dim(0));
-    assert(out[1] < dim(1));
-  }
-
-
 
 protected:
   unsigned dim_[2];

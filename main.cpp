@@ -7,9 +7,8 @@
 #include "kernel.h"
 #include "matrix.h"
 #include "host_matrix.h"
+#include "const.h"
 
-#define VOCABSIZE 384  //good multiple of 16 and 128
-#define LAYER_DIM 512 // assuming to be multiple of 16
 
 using namespace std;
 
@@ -78,6 +77,8 @@ int main()
     cerr << vec[i] << " ";
   }  
   cerr << endl;
+
+  Affine(h_Y, h_W, h_X, h_B);
 
   cerr << "Finished" << endl;
 }

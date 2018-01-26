@@ -108,4 +108,10 @@ protected:
 	std::vector<float> data_;
 };
 
+/////////////////////////////////////////////////////
+
+void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B);
+
+
+
 

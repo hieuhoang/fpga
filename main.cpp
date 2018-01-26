@@ -7,6 +7,9 @@
 #include "kernel.h"
 #include "matrix.h"
 
+#define VOCABSIZE 384  //good multiple of 16 and 128
+#define LAYER_DIM 512 // assuming to be multiple of 16
+
 using namespace std;
 
 
@@ -27,10 +30,10 @@ int main()
   CreateProgram(openCLInfo, "kernels/fpga.aocx");
   cerr << "CreateProgram done" << endl;
 
-  Matrix<float> W(openCLInfo, true, 85000, 512);
-  Matrix<float> X(openCLInfo, true, 512, 640);
-  Matrix<float> B(openCLInfo, true, 1, 85000);
-  Matrix<float> Y(openCLInfo, true, 85000, 640);
+  Matrix<float> W(openCLInfo, true, VOCABSIZE, LAYER_DIM);
+  Matrix<float> X(openCLInfo, true, LAYER_DIM, 640);
+  Matrix<float> B(openCLInfo, true, 1, VOCABSIZE);
+  Matrix<float> Y(openCLInfo, true, VOCABSIZE, 640);
 
   vector<float> vec;
   

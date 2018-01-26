@@ -40,11 +40,9 @@ int main()
   h_B.Set(125.87);
   h_Y.Set(8.55);
 
-  Matrix<float> W(openCLInfo, true, h_W);
-  Matrix<float> X(openCLInfo, true, h_X);
-  Matrix<float> B(openCLInfo, true, h_B);
-  Matrix<float> Y(openCLInfo, true, h_Y);
-
+  Matrix<float> W(openCLInfo, rowMajor, h_W);
+  Matrix<float> X(openCLInfo, colMajor, h_X);
+  Matrix<float> B(openCLInfo, colMajor, h_B);
 
   cerr << "FPGA:" << endl;
   cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
@@ -52,9 +50,9 @@ int main()
     //CallOpenCL("OutputLayer_float", openCLInfo,
     //    W.data(), X.data(), B.data(), Y.data(), X.dim(1));
 
-    CallOpenCL(kernel, openCLInfo,
-        W.data(), X.data(), B.data(), Y.data(), X.dim(1));
-    CheckError( clFinish(openCLInfo.commands) );
+    //CallOpenCL(kernel, openCLInfo,
+    //    W.data(), X.data(), B.data(), Y.data(), X.dim(1));
+    //CheckError( clFinish(openCLInfo.commands) );
   }
 
   

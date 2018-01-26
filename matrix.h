@@ -7,9 +7,9 @@ template<typename T>
 class Matrix
 {
 public:
-  Matrix(const OpenCLInfo &openCLInfo, bool rowMajor, unsigned a, unsigned b)
+  Matrix(const OpenCLInfo &openCLInfo, MatrixIndexType indexType, unsigned a, unsigned b)
   :openCLInfo_(openCLInfo)
-  ,rowMajor_(rowMajor)
+  ,indexType_(indexType)
   ,size_(a * b)
   {
     dim_[0] = a;
@@ -20,16 +20,18 @@ public:
     CheckError(err);
   }
 
-  Matrix(const OpenCLInfo &openCLInfo, bool rowMajor, const HostMatrix<T> &h_matrix)
+  Matrix(const OpenCLInfo &openCLInfo, MatrixIndexType indexType, const HostMatrix<T> &h_matrix)
   :openCLInfo_(openCLInfo)
-  ,rowMajor_(rowMajor)
+  ,indexType_(indexType)
   ,size_(h_matrix.size())
   {
     dim_[0] = h_matrix.dim(0);
     dim_[1] = h_matrix.dim(1);
 
+    std::vector<T> vec = h_matrix.Get(indexType_);
+
     cl_int err;
-    mem_ = clCreateBuffer(openCLInfo.context,  CL_MEM_COPY_HOST_PTR,  sizeof(T) * size(), (void*) h_matrix.data(), &err);
+    mem_ = clCreateBuffer(openCLInfo.context,  CL_MEM_COPY_HOST_PTR,  sizeof(T) * size(), (void*) vec.data(), &err);
     CheckError(err);
 
   }
@@ -39,9 +41,6 @@ public:
 
   const cl_mem &data() const
   { return mem_; }
-
-  bool isRowMajor() const
-  { return rowMajor_; }
  
   unsigned dim(unsigned i) const
   { return dim_[i]; }
@@ -62,7 +61,7 @@ public:
 
 protected:
   const OpenCLInfo &openCLInfo_;
-  bool rowMajor_;
+  MatrixIndexType indexType_;
   unsigned dim_[2];
   unsigned size_;
   cl_mem mem_;

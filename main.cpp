@@ -32,53 +32,52 @@ int main()
 
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
   HostMatrix<float> h_X(LAYER_DIM, 640);
-  HostMatrix<float> h_B(1, VOCABSIZE);
+  HostMatrix<float> h_B(VOCABSIZE, 1);
+  HostMatrix<MaxY_type> h_maxY(1, 640);
+
+  MaxY_type init;
+  init.MaxVal = 3423;
+  init.index = 9999;
+  h_maxY.Set(init);
+
+  ///*
+  srand (time(NULL));
+  Random(h_W);
+  Random(h_X);
+  Random(h_B);
+  //*/
+  /*
+  h_W.Set(1);
+  h_X.Set(1);
+  h_B.Set(1);
+  */
+
+  Matrix<float> W(openCLInfo, rowMajor, h_W);
+  Matrix<float> X(openCLInfo, colMajor, h_X);
+  Matrix<float> B(openCLInfo, rowMajor, h_B);
+  Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, 640);
+
+  cerr << "FPGA:" << endl;
+  cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
+  CallOpenCL(kernel, openCLInfo,
+  			    W.data(), 
+						X.data(), 
+						B.data(), 
+						maxY.data(),
+						X.dim(1));
+  CheckError( clFinish(openCLInfo.commands) );
+
+  maxY.CopyTo(h_maxY);
+  Debug(h_maxY);
+
+  cerr << "HOST:" << endl;
+  h_maxY.Set(init);
   HostMatrix<float> h_Y(VOCABSIZE, 640);
 
-  h_W.Set(43.232);
-  h_X.Set(67.2);
-  h_B.Set(125.87);
-  h_Y.Set(8.55);
-
-  Matrix<float> W(openCLInfo, true, h_W);
-  Matrix<float> X(openCLInfo, true, h_X);
-  Matrix<float> B(openCLInfo, true, h_B);
-  Matrix<float> Y(openCLInfo, true, h_Y);
-
-  vector<float> vec;
-  
-  cerr << "main1" << endl;
-  vec.resize(W.size(), 3.3);
-  W.CopyFrom(vec.data(), vec.size());
-
-  vec.resize(X.size(), 21.2);
-  X.CopyFrom(vec.data(), vec.size());
-
-  vec.resize(B.size(), 9.3443);
-  B.CopyFrom(vec.data(), vec.size());
-
-  cerr << "main2" << endl;
-
-  cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
-
-  for (size_t i = 0; i < 1; ++i) {
-    //CallOpenCL("OutputLayer_float", openCLInfo,
-    //    W.data(), X.data(), B.data(), Y.data(), X.dim(1));
-
-    CallOpenCL(kernel, openCLInfo,
-        W.data(), X.data(), B.data(), Y.data(), X.dim(1));
-    CheckError( clFinish(openCLInfo.commands) );
-
-  }
-
-  vec.resize(Y.size());
-  Y.CopyTo(vec.data(), vec.size());
-  for (size_t i = 0; i < vec.size(); ++i) {
-    cerr << vec[i] << " ";
-  }  
-  cerr << endl;
-
   Affine(h_Y, h_W, h_X, h_B);
+  Max(h_maxY, h_Y);
+
+  Debug(h_maxY);
 
   cerr << "Finished" << endl;
 }

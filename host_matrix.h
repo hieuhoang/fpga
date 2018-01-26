@@ -1,6 +1,7 @@
 #pragma once
 #include <cassert>
 #include <vector>
+#include "const.h"
 
 enum MatrixIndexType
 {
@@ -27,6 +28,18 @@ public:
 
   unsigned size() const
   { return size_; }
+
+  const T &operator[](unsigned id) const
+  {
+    assert(id < size());
+    return data_[id];
+  }
+
+  T &operator[](unsigned id)
+  {
+    assert(id < size());
+    return data_[id];
+  }
 
   const T &operator()(unsigned row, unsigned col) const
   {
@@ -55,6 +68,25 @@ public:
     return ret;
   }
 
+  void Set(const T &val)
+  {
+    for (unsigned i = 0; i < size(); ++i) {
+      data_[i] = val;
+    }
+  }
+
+  void CopyFrom(const T *arr, MatrixIndexType indexType)
+  {
+    for (unsigned row = 0; row < dim(0); ++row) {
+      for (unsigned col = 0; col < dim(1); ++col) {
+				unsigned id = indices2Id(indexType, row, col);
+        const T &val = arr[id];
+      
+        (*this)(row, col) = val;
+      }
+    }
+  }
+
   unsigned indices2Id(MatrixIndexType indexType, unsigned row, unsigned col) const
   {
     unsigned ind;
@@ -74,44 +106,20 @@ public:
     return ind;
   }
 
-  void id2Indices(MatrixIndexType indexType, unsigned id, unsigned *out) const
-  {
-    assert(id < size());
-
-    if (indexType == colMajor) {
-      out[0] = id / dim(0);
-      out[1] = id % dim(0);
-    }
-    else if (indexType == rowMajor) {
-      out[1] = id / dim(1);
-      out[0] = id % dim(1);
-    }
-    else {
-      assert(false);
-    }
-
-    assert(out[0] < dim(0));
-    assert(out[1] < dim(1));
-  }
-
-  void Set(const T &val)
-  {
-    for (unsigned i = 0; i < size(); ++i) {
-      data_[i] = val;
-    }
-  }
-
-
 protected:
   unsigned dim_[2];
   unsigned size_;
-	std::vector<float> data_;
+	std::vector<T> data_;
 };
 
 /////////////////////////////////////////////////////
 
-void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B);
+void Debug(HostMatrix<float> &matrix);
+void Debug(HostMatrix<MaxY_type> &matrix);
 
+void Random(HostMatrix<float> &matrix);
+void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B);
+void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y);
 
 
 

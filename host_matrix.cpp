@@ -1,5 +1,36 @@
+#include <iostream>
 #include <cassert>
 #include "host_matrix.h"
+
+using namespace std;
+
+void Debug(HostMatrix<float> &matrix)
+{
+  for (unsigned row = 0; row < matrix.dim(0); ++row) {
+    for (unsigned col = 0; col < matrix.dim(1); ++col) {
+      cerr << matrix(row, col) << " ";
+    }
+    cerr << endl;
+  }  
+}
+
+void Debug(HostMatrix<MaxY_type> &matrix)
+{
+  for (unsigned row = 0; row < matrix.dim(0); ++row) {
+    for (unsigned col = 0; col < matrix.dim(1); ++col) {
+      const MaxY_type &val = matrix(row, col);
+      cerr << "(" << val.MaxVal << "," << val.index << ") ";
+    }
+    cerr << endl;
+  }  
+}
+
+void Random(HostMatrix<float> &matrix)
+{
+  for (unsigned i = 0; i < matrix.size(); ++i) {
+    matrix[i] = ((double) rand() / (RAND_MAX));
+  }
+}
 
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 {
@@ -18,6 +49,27 @@ void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<f
       }
       Y(rowW, colX) = sum + B(rowW, 0);
     }
+  }
+}
+
+void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y)
+{
+  assert(maxY.dim(0) == 1);
+  assert(maxY.dim(1) == Y.dim(1));
+
+  for (unsigned col = 0; col < Y.dim(1); ++col) {
+    float max = Y(0, col);
+    unsigned argmax = 0;
+    for (unsigned row = 1; row < Y.dim(0); ++row) {
+      if (max < Y(row, col)) {
+        max = Y(row, col);
+        argmax = row;
+      }
+    }
+
+    MaxY_type &ele = maxY[col];
+    ele.MaxVal = max;
+    ele.index = argmax;
   }
 }
 

@@ -1,5 +1,18 @@
+#include <iostream>
 #include <cassert>
 #include "host_matrix.h"
+
+using namespace std;
+
+void Debug(HostMatrix<float> &matrix)
+{
+  for (unsigned row = 0; row < matrix.dim(0); ++row) {
+    for (unsigned col = 0; col < matrix.dim(1); ++col) {
+      cerr << matrix(row, col) << " ";
+    }
+    cerr << endl;
+  }  
+}
 
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 {

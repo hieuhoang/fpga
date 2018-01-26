@@ -32,7 +32,7 @@ int main()
 
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
   HostMatrix<float> h_X(LAYER_DIM, 640);
-  HostMatrix<float> h_B(1, VOCABSIZE);
+  HostMatrix<float> h_B(VOCABSIZE, 1);
   HostMatrix<float> h_Y(VOCABSIZE, 640);
 
   h_W.Set(43.232);
@@ -45,22 +45,9 @@ int main()
   Matrix<float> B(openCLInfo, true, h_B);
   Matrix<float> Y(openCLInfo, true, h_Y);
 
-  vector<float> vec;
-  
-  cerr << "main1" << endl;
-  vec.resize(W.size(), 3.3);
-  W.CopyFrom(vec.data(), vec.size());
 
-  vec.resize(X.size(), 21.2);
-  X.CopyFrom(vec.data(), vec.size());
-
-  vec.resize(B.size(), 9.3443);
-  B.CopyFrom(vec.data(), vec.size());
-
-  cerr << "main2" << endl;
-
+  cerr << "FPGA:" << endl;
   cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
-
   for (size_t i = 0; i < 1; ++i) {
     //CallOpenCL("OutputLayer_float", openCLInfo,
     //    W.data(), X.data(), B.data(), Y.data(), X.dim(1));
@@ -68,17 +55,15 @@ int main()
     CallOpenCL(kernel, openCLInfo,
         W.data(), X.data(), B.data(), Y.data(), X.dim(1));
     CheckError( clFinish(openCLInfo.commands) );
-
   }
 
-  vec.resize(Y.size());
-  Y.CopyTo(vec.data(), vec.size());
-  for (size_t i = 0; i < vec.size(); ++i) {
-    cerr << vec[i] << " ";
-  }  
-  cerr << endl;
+  
+  Debug(h_Y);
 
+  cerr << "HOST:" << endl;
   Affine(h_Y, h_W, h_X, h_B);
+
+  Debug(h_Y);
 
   cerr << "Finished" << endl;
 }

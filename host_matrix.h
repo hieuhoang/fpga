@@ -55,6 +55,24 @@ public:
     return ret;
   }
 
+  void Set(const T &val)
+  {
+    for (unsigned i = 0; i < size(); ++i) {
+      data_[i] = val;
+    }
+  }
+
+  void CopyFrom(const T *arr, MatrixIndexType indexType)
+  {
+    for (unsigned i = 0; i < size(); ++i) {
+      const T &val = arr[i];
+      
+      unsigned indices[2];
+      id2Indices(indexType, i, indices);
+      (*this)(indices[0], indices[1]) = val;
+    }
+  }
+
   unsigned indices2Id(MatrixIndexType indexType, unsigned row, unsigned col) const
   {
     unsigned ind;
@@ -94,12 +112,6 @@ public:
     assert(out[1] < dim(1));
   }
 
-  void Set(const T &val)
-  {
-    for (unsigned i = 0; i < size(); ++i) {
-      data_[i] = val;
-    }
-  }
 
 
 protected:
@@ -109,6 +121,8 @@ protected:
 };
 
 /////////////////////////////////////////////////////
+
+void Debug(HostMatrix<float> &matrix);
 
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B);
 

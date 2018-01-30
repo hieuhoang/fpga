@@ -7,6 +7,8 @@
 
 using namespace std;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void HandleError(cudaError_t err, const char *file, int line ) {
   if (err != cudaSuccess) {
     std::cerr << "ERROR: " << cudaGetErrorString(err) << " in " << file << " at line " << line << std::endl;
@@ -15,6 +17,8 @@ void HandleError(cudaError_t err, const char *file, int line ) {
 }
 
 #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void HandleErrorCublas(cublasStatus_t err, const char *file, int line ) {
   if (err != CUBLAS_STATUS_SUCCESS) {
@@ -25,7 +29,9 @@ void HandleErrorCublas(cublasStatus_t err, const char *file, int line ) {
 
 #define HANDLE_ERROR_CUBLAS( err ) (HandleErrorCublas( err, __FILE__, __LINE__ ))
 
-void runCuda()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void runCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 { 
   cublasHandle_t handle;
   cublasStatus_t stat;
@@ -48,21 +54,18 @@ void runCuda()
 
   const float alpha = 1;
   const float beta = 0;
-  const float *A;
-  const float *B;
-  float *C;
 
-  HANDLE_ERROR( cudaMalloc(&A, 85000 * 512 * sizeof(float)) );
-  HANDLE_ERROR( cudaMalloc(&B, 512 * 640 * sizeof(float)) );
-  HANDLE_ERROR( cudaMalloc(&C, 85000 * 640 * sizeof(float)) );
+  const float *Aptr;
+  const float *Bptr;
+  float *Cptr;
 
   HANDLE_ERROR_CUBLAS(cublasSgemm(handle, opA, opB,
                       m, n, k,
                       &alpha,
-                      A, lda,
-                      B, ldb,
+                      Aptr, lda,
+                      Bptr, ldb,
                       &beta,
-                      C, ldc));
+                      Cptr, ldc));
 
 }
 

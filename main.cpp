@@ -53,13 +53,13 @@ int main()
   h_B.Set(1);
   */
 
+  Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, 640);
   Matrix<float> W(openCLInfo, rowMajor, h_W);
   Matrix<float> X(openCLInfo, colMajor, h_X);
   Matrix<float> B(openCLInfo, rowMajor, h_B);
-  Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, 640);
 
   cerr << "CUDA:" << endl;
-  runCuda();
+  runCuda(h_maxY, h_W, h_X, h_B);
 
   cerr << "FPGA:" << endl;
   h_maxY.Set(init);

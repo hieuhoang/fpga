@@ -33,6 +33,8 @@ void runCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
   const float alpha = 1;
   const float beta = 0;
 
+  CudaMatrix<float> cudaX(X);
+
   const float *Aptr;
   const float *Bptr;
   float *Cptr;

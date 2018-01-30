@@ -1,6 +1,7 @@
 #pragma once
 #include <cassert>
 #include "host-matrix.h"
+#include "types-cuda.h"
 
 // always column-major
 template<typename T>
@@ -12,16 +13,19 @@ public:
   {
     dim_[0] = a;
     dim_[1] = b;
-    cudaMalloc(&data_, size_ * sizeof(T));
+
+    HandleError(cudaMalloc(&data_, size_ * sizeof(T)));
   }
 
-  CudaMatrix(MatrixIndexType indexType, const HostMatrix<T> &h_matrix)
+  CudaMatrix(const HostMatrix<T> &h_matrix)
   :size_(h_matrix.size())
   {
     dim_[0] = h_matrix.dim(0);
     dim_[1] = h_matrix.dim(1);
 
     std::vector<T> vec = h_matrix.Get(colMajor);
+
+    HandleError(cudaMalloc(&data_, size_ * sizeof(T)));
 
   }
 

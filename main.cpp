@@ -58,7 +58,11 @@ int main()
   Matrix<float> B(openCLInfo, rowMajor, h_B);
   Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, 640);
 
+  cerr << "CUDA:" << endl;
+  runCuda();
+
   cerr << "FPGA:" << endl;
+  h_maxY.Set(init);
   cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
   CallOpenCL(kernel, openCLInfo,
   			    W.data(), 
@@ -78,9 +82,6 @@ int main()
   Affine(h_Y, h_W, h_X, h_B);
   Max(h_maxY, h_Y);
   Debug(h_maxY);
-
-  cerr << "CUDA:" << endl;
-  runCuda();
 
   cerr << "Finished" << endl;
 }

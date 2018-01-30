@@ -8,6 +8,7 @@
 #include "matrix.h"
 #include "host_matrix.h"
 #include "const.h"
+#include "cuda-code.h"
 
 
 using namespace std;
@@ -76,8 +77,10 @@ int main()
 
   Affine(h_Y, h_W, h_X, h_B);
   Max(h_maxY, h_Y);
-
   Debug(h_maxY);
+
+  cerr << "CUDA:" << endl;
+  runCuda();
 
   cerr << "Finished" << endl;
 }

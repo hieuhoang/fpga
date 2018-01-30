@@ -1,6 +1,6 @@
 #pragma once
 #include <cassert>
-#include "host_matrix.h"
+#include "host-matrix.h"
 
 // always column-major
 template<typename T>

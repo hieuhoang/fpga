@@ -1,7 +1,7 @@
 #pragma once
 #include <cassert>
 #include "types-fpga.h"
-#include "host_matrix.h"
+#include "host-matrix.h"
 
 template<typename T>
 class Matrix

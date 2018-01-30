@@ -6,7 +6,7 @@
 #include "types-fpga.h"
 #include "kernel.h"
 #include "matrix.h"
-#include "host_matrix.h"
+#include "host-matrix.h"
 #include "const.h"
 #include "cuda-code.h"
 

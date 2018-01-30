@@ -4,7 +4,7 @@
 #include <cuda.h>
 #include <cublas_v2.h>
 #include "cuda-code.h"
-#include "cuda_matrix.h"
+#include "cuda-matrix.h"
 #include "types-cuda.h"
 
 using namespace std;

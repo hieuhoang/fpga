@@ -2,6 +2,7 @@
 #include <cassert>
 #include "host_matrix.h"
 
+// always column-major
 template<typename T>
 class CudaMatrix
 {
@@ -11,18 +12,27 @@ public:
   {
     dim_[0] = a;
     dim_[1] = b;
-
+    cudaMalloc(&data_, size_ * sizeof(T));
   }
 
-  Matrix(const OpenCLInfo &openCLInfo, MatrixIndexType indexType, const HostMatrix<T> &h_matrix)
+  CudaMatrix(MatrixIndexType indexType, const HostMatrix<T> &h_matrix)
   :size_(h_matrix.size())
   {
     dim_[0] = h_matrix.dim(0);
     dim_[1] = h_matrix.dim(1);
 
-    std::vector<T> vec = h_matrix.Get(indexType_);
+    std::vector<T> vec = h_matrix.Get(colMajor);
 
   }
+
+  const T *data() const
+  { return data_; }
+
+  unsigned dim(unsigned i) const
+  { return dim_[i]; }
+
+  unsigned size() const
+  { return size_; }
 
   void CopyTo(HostMatrix<T> &h_matrix) const
   {
@@ -30,12 +40,13 @@ public:
 
     std::vector<T> vec(size());
 
-    h_matrix.CopyFrom(vec.data(), indexType_);
+    h_matrix.CopyFrom(vec.data(), colMajor);
 
   }
 
 protected:
   unsigned dim_[2];
   unsigned size_;
+  T *data_;
 };
 

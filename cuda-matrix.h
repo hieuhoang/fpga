@@ -14,7 +14,7 @@ public:
     dim_[0] = a;
     dim_[1] = b;
 
-    HandleError(cudaMalloc(&data_, size_ * sizeof(T)));
+    HANDLE_ERROR(cudaMalloc(&data_, size_ * sizeof(T)));
   }
 
   CudaMatrix(const HostMatrix<T> &h_matrix)
@@ -25,9 +25,14 @@ public:
 
     std::vector<T> vec = h_matrix.Get(colMajor);
 
-    HandleError(cudaMalloc(&data_, size_ * sizeof(T)));
+    size_t bytes = size_ * sizeof(T);
+    HANDLE_ERROR(cudaMalloc(&data_, bytes));
+    HANDLE_ERROR(cudaMemcpy(data_, vec.data(), bytes, cudaMemcpyHostToDevice));
 
   }
+
+  T *data()
+  { return data_; }
 
   const T *data() const
   { return data_; }

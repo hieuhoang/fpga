@@ -33,19 +33,18 @@ void runCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
   const float alpha = 1;
   const float beta = 0;
 
+  CudaMatrix<float> cudaW(W);
   CudaMatrix<float> cudaX(X);
-
-  const float *Aptr;
-  const float *Bptr;
-  float *Cptr;
+  CudaMatrix<float> cudaB(B);
+  CudaMatrix<float> cudaY(85000, 640);
 
   HANDLE_ERROR_CUBLAS(cublasSgemm(handle, opA, opB,
                       m, n, k,
                       &alpha,
-                      Aptr, lda,
-                      Bptr, ldb,
+                      cudaW.data(), lda,
+                      cudaX.data(), ldb,
                       &beta,
-                      Cptr, ldc));
+                      cudaY.data(), ldc));
 
 }
 

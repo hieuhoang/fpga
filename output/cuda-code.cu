@@ -17,24 +17,23 @@ void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> i
   assert(out.dim(1) == in.dim(1));
 
   unsigned col = blockIdx.x;
-  while (col < in.dim(1)) {
-    unsigned maxIndex = 0;
-    float value = in(0, col);
+  assert(col < in.dim(1));
 
-    for (unsigned row = 1; row < in.dim(0); ++row) {
-      float val = in(row, col);
-      if (val > value) {
-        value = val;
-        maxIndex = row;
-      }
+  unsigned maxIndex = 0;
+  float value = in(0, col);
+
+  for (unsigned row = 1; row < in.dim(0); ++row) {
+    float val = in(row, col);
+    if (val > value) {
+      value = val;
+      maxIndex = row;
     }
-
-    MaxY_type &ele = out[col];
-    ele.value = value;
-    ele.index = maxIndex;
-
-    col += gridDim.x;
   }
+
+  MaxY_type &ele = out[col];
+  ele.value = value;
+  ele.index = maxIndex;
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +77,7 @@ void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
 
   CudaMatrix<MaxY_type> cudaMaxY(1, MAXBATCH);
 
-  unsigned blocks = std::min((unsigned) MAX_BLOCKS, cudaY.dim(0));
+  unsigned blocks = std::min((unsigned) MAX_BLOCKS, cudaY.dim(1));
   unsigned threads = 1; // std::min((unsigned)MAX_THREADS, cudaY.dim(1));
   cerr << "blocks=" << blocks << " threads=" << threads << endl;
 

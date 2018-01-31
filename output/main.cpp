@@ -30,7 +30,7 @@ int main()
   openCLInfo.commands = CreateCommandQueue(openCLInfo);
   cerr << "CreateCommandQueue done" << endl;
 
-  CreateProgram(openCLInfo, "kernels/fpga.aocx");
+  CreateProgram(openCLInfo, "kernels/OutputLayer.aocx");
   cerr << "CreateProgram done" << endl;
 
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);

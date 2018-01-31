@@ -4,10 +4,10 @@
 #include "host-matrix.h"
 
 template<typename T>
-class Matrix
+class FPGAMatrix
 {
 public:
-  Matrix(const OpenCLInfo &openCLInfo, MatrixIndexType indexType, unsigned a, unsigned b)
+  FPGAMatrix(const OpenCLInfo &openCLInfo, MatrixIndexType indexType, unsigned a, unsigned b)
   :openCLInfo_(openCLInfo)
   ,indexType_(indexType)
   ,size_(a * b)
@@ -20,7 +20,7 @@ public:
     CheckError(err);
   }
 
-  Matrix(const OpenCLInfo &openCLInfo, MatrixIndexType indexType, const HostMatrix<T> &h_matrix)
+  FPGAMatrix(const OpenCLInfo &openCLInfo, MatrixIndexType indexType, const HostMatrix<T> &h_matrix)
   :openCLInfo_(openCLInfo)
   ,indexType_(indexType)
   ,size_(h_matrix.size())

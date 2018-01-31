@@ -5,7 +5,7 @@
 #include <vector>
 #include "types-fpga.h"
 #include "kernel.h"
-#include "matrix.h"
+#include "fpga-matrix.h"
 #include "host-matrix.h"
 #include "const.h"
 
@@ -55,10 +55,10 @@ int main()
   h_B.Set(1);
   */
 
-  Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, MAXBATCH);
-  Matrix<float> W(openCLInfo, rowMajor, h_W);
-  Matrix<float> X(openCLInfo, colMajor, h_X);
-  Matrix<float> B(openCLInfo, rowMajor, h_B);
+  FPGAMatrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, MAXBATCH);
+  FPGAMatrix<float> W(openCLInfo, rowMajor, h_W);
+  FPGAMatrix<float> X(openCLInfo, colMajor, h_X);
+  FPGAMatrix<float> B(openCLInfo, rowMajor, h_B);
 
 #ifdef USE_CUDA
   cerr << "CUDA:" << endl;

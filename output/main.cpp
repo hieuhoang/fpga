@@ -8,8 +8,10 @@
 #include "matrix.h"
 #include "host-matrix.h"
 #include "const.h"
-#include "cuda-code.h"
 
+#ifdef CUDA
+#include "cuda-code.h"
+#endif
 
 using namespace std;
 
@@ -58,8 +60,10 @@ int main()
   Matrix<float> X(openCLInfo, colMajor, h_X);
   Matrix<float> B(openCLInfo, rowMajor, h_B);
 
+#ifdef CUDA
   cerr << "CUDA:" << endl;
   RunCuda(h_maxY, h_W, h_X, h_B);
+#endif
 
   cerr << "FPGA:" << endl;
   h_maxY.Set(init);

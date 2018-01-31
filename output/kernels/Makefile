@@ -1,10 +1,10 @@
 all: emu rtl 
 
-emu: OutputLayer.cl
+emu: 
 	aoc -march=emulator -v -DEMULATOR=1 OutputLayer.cl -o fpga.aocx
 
-rtl: OutputLayer.cl
+rtl: 
 	aoc -c -v -fpc -fp-relaxed OutputLayer.cl
 
-fpga: OutputLayer.cl
+fpga: 
 	aoc -v -fpc -fp-relaxed OutputLayer.cl -profile

@@ -7,4 +7,5 @@ rtl:
 	aoc -c -v -fpc -fp-relaxed OutputLayer.cl -o OutputLayer.aocx
 
 fpga: 
-	aoc -v -fpc -fp-relaxed OutputLayer.cl -o OutputLayer.aocx -profile
+	aoc -v -fpc -fp-relaxed OutputLayer.cl -o OutputLayer.aocx -profile -incremental
+

@@ -63,6 +63,7 @@ int main()
 #ifdef USE_CUDA
   cerr << "CUDA:" << endl;
   RunCuda(h_maxY, h_W, h_X, h_B);
+  Debug(h_maxY);
 #endif
 
   cerr << "FPGA:" << endl;

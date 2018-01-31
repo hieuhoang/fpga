@@ -74,6 +74,7 @@ void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
 
   cudaDeviceSynchronize();
 
+  cudaMaxY.CopyTo(maxY);
 }
 
 

@@ -8,8 +8,12 @@ template<typename T>
 class CudaMatrix
 {
 public:
+  CudaMatrix() = delete;
+  CudaMatrix(const CudaMatrix&) = delete;
+
   CudaMatrix(unsigned a, unsigned b)
   :size_(a * b)
+  ,data_(NULL)
   {
     dim_[0] = a;
     dim_[1] = b;
@@ -19,6 +23,7 @@ public:
 
   CudaMatrix(const HostMatrix<T> &h_matrix)
   :size_(h_matrix.size())
+  ,data_(NULL)
   {
     dim_[0] = h_matrix.dim(0);
     dim_[1] = h_matrix.dim(1);
@@ -48,6 +53,13 @@ public:
     size_t bytes = size() * sizeof(T);
 
     std::vector<T> vec(size());
+    std::cerr << "vec.data()="
+              << vec.data() << " "
+              << data_ << " "
+              << bytes << " "
+              <<  std::endl;
+
+    HANDLE_ERROR(cudaMemcpy(vec.data(), data_, bytes, cudaMemcpyDeviceToHost));
 
     h_matrix.CopyFrom(vec.data(), colMajor);
 

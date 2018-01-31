@@ -9,7 +9,7 @@
 #include "host-matrix.h"
 #include "const.h"
 
-#ifdef CUDA
+#ifdef USE_CUDA
 #include "cuda-code.h"
 #endif
 
@@ -60,7 +60,7 @@ int main()
   Matrix<float> X(openCLInfo, colMajor, h_X);
   Matrix<float> B(openCLInfo, rowMajor, h_B);
 
-#ifdef CUDA
+#ifdef USE_CUDA
   cerr << "CUDA:" << endl;
   RunCuda(h_maxY, h_W, h_X, h_B);
 #endif

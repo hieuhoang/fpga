@@ -16,18 +16,18 @@ void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> i
   assert(out.dim(1) == in.dim(1));
   for (unsigned col = 0; col < in.dim(1); ++col) {
     unsigned maxIndex = 0;
-    float maxVal = in(0, col);
+    float value = in(0, col);
 
     for (unsigned row = 1; row < in.dim(0); ++row) {
       float val = in(row, col);
-      if (val > maxVal) {
-        maxVal = val;
+      if (val > value) {
+        value = val;
         maxIndex = row;
       }
     }
 
     MaxY_type &ele = out[col];
-    ele.MaxVal = maxVal;
+    ele.value = value;
     ele.index = maxIndex;
   }
 }

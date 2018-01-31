@@ -19,7 +19,7 @@ void Debug(HostMatrix<MaxY_type> &matrix)
   for (unsigned row = 0; row < matrix.dim(0); ++row) {
     for (unsigned col = 0; col < matrix.dim(1); ++col) {
       const MaxY_type &val = matrix(row, col);
-      cerr << "(" << val.MaxVal << "," << val.index << ") ";
+      cerr << "(" << val.value << "," << val.index << ") ";
     }
     cerr << endl;
   }  
@@ -68,7 +68,7 @@ void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y)
     }
 
     MaxY_type &ele = maxY[col];
-    ele.MaxVal = max;
+    ele.value = max;
     ele.index = argmax;
   }
 }

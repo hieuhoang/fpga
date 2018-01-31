@@ -37,7 +37,7 @@ int main()
   HostMatrix<MaxY_type> h_maxY(1, 640);
 
   MaxY_type init;
-  init.MaxVal = 3423;
+  init.value = 3423;
   init.index = 9999;
   h_maxY.Set(init);
 

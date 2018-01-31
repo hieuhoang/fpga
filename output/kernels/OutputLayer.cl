@@ -29,7 +29,7 @@ __kernel void OutputLayer_float(
 	struct MaxY_type MaxYlocal[MAXBATCH];
 	#pragma unroll 1
 	for (short mi=0; mi < batchsize; mi++){
-		MaxYlocal[mi].MaxVal=-MAXFLOAT;
+		MaxYlocal[mi].value=-MAXFLOAT;
 		MaxYlocal[mi].index=VOCABSIZE+100; //you can get rid of this later
 	}
 #if EMULATOR == 1
@@ -109,8 +109,8 @@ __kernel void OutputLayer_float(
 				//Ypointer++;
 				#pragma unroll 1
 				for (char u=0; u < 16; u++) {
-					if (yaddb[pb][u] > MaxYlocal[xj].MaxVal) {
-						MaxYlocal[xj].MaxVal = yaddb[pb][u];
+					if (yaddb[pb][u] > MaxYlocal[xj].value) {
+						MaxYlocal[xj].value = yaddb[pb][u];
 						MaxYlocal[xj].index  = tile * P + pb*16 + u;
 					}
 				}
@@ -122,7 +122,7 @@ __kernel void OutputLayer_float(
 	MaxYpointer = (__global volatile uint2 *)MaxY;
 	
 	for (short mi=0; mi < batchsize; mi++) {
-		*MaxYpointer = (uint2)(as_uint(MaxYlocal[mi].MaxVal), MaxYlocal[mi].index) ;
+		*MaxYpointer = (uint2)(as_uint(MaxYlocal[mi].value), MaxYlocal[mi].index) ;
 		MaxYpointer++;
 	}
 

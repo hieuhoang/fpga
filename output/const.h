@@ -16,7 +16,7 @@
 
 struct MaxY_type
 {
-	float MaxVal;
+	float value;
   unsigned index;
 };
 

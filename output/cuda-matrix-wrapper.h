@@ -26,6 +26,16 @@ public:
   }
 
   __device__ __host__
+  CudaMatrixWrapper(T *data, unsigned rows, unsigned cols)
+  :size_(rows * cols)
+  ,data_(data)
+  ,dataConst_(data)
+  {
+    dim_[0] = rows;
+    dim_[1] = cols;
+  }
+
+  __device__ __host__
   unsigned dim(unsigned i) const
   { return dim_[i]; }
 

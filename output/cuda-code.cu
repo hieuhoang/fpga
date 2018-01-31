@@ -14,26 +14,49 @@ using namespace std;
 __global__
 void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> in)
 {
-  assert(out.dim(1) == in.dim(1));
+  extern __shared__ MaxY_type tmp[];
+  CudaMatrixWrapper<MaxY_type> maxes(tmp, blockDim.x, 1);
 
-  unsigned col = blockIdx.x;
+  assert(out.dim(1) == in.dim(1));
+  unsigned rows = in.dim(0);
+
+  unsigned col = blockIdx.x; // hypoInd
   assert(col < in.dim(1));
 
-  unsigned maxIndex = 0;
-  float value = in(0, col);
+  unsigned row = threadIdx.x; // vocabInd
+  assert(row < rows);
 
-  for (unsigned row = 1; row < in.dim(0); ++row) {
+  MaxY_type &ele = maxes[threadIdx.x];
+  ele.value = in(row, col);
+  ele.index = row;
+
+  row += blockDim.x;
+  while (row < rows) {
     float val = in(row, col);
-    if (val > value) {
-      value = val;
-      maxIndex = row;
+    if (val > ele.value) {
+      ele.value = val;
+      ele.index = row;
     }
+
+    row += blockDim.x;
   }
 
-  MaxY_type &ele = out[col];
-  ele.value = value;
-  ele.index = maxIndex;
+  if (threadIdx.x == 0) {
+    for (unsigned i = 1; i < blockDim.x; ++i) {
+      if (maxes[0].value < maxes[i].value) {
+        maxes[0].value = maxes[i].value;
+        maxes[0].index = maxes[i].index;
+      }
+    }
 
+    out[col].value = maxes[0].value;
+    out[col].index = maxes[0].index;
+  }
+  /*
+  MaxY_type &ele = out[col];
+  ele.value = maxVal;
+  ele.index = maxIndex;
+  */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,9 +102,11 @@ void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
 
   unsigned blocks = std::min((unsigned) MAX_BLOCKS, cudaY.dim(1));
   unsigned threads = 1; // std::min((unsigned)MAX_THREADS, cudaY.dim(1));
+  unsigned shared = sizeof(MaxY_type) * threads;
+
   cerr << "blocks=" << blocks << " threads=" << threads << endl;
 
-  gCalcMax<<<blocks, threads>>>(cudaMaxY, cudaY);
+  gCalcMax<<<blocks, threads, shared>>>(cudaMaxY, cudaY);
 
   cudaDeviceSynchronize();
 

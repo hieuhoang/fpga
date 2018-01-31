@@ -34,9 +34,9 @@ int main()
   cerr << "CreateProgram done" << endl;
 
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
-  HostMatrix<float> h_X(LAYER_DIM, 640);
+  HostMatrix<float> h_X(LAYER_DIM, MAXBATCH);
   HostMatrix<float> h_B(VOCABSIZE, 1);
-  HostMatrix<MaxY_type> h_maxY(1, 640);
+  HostMatrix<MaxY_type> h_maxY(1, MAXBATCH);
 
   MaxY_type init;
   init.value = 3423;
@@ -55,7 +55,7 @@ int main()
   h_B.Set(1);
   */
 
-  Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, 640);
+  Matrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, MAXBATCH);
   Matrix<float> W(openCLInfo, rowMajor, h_W);
   Matrix<float> X(openCLInfo, colMajor, h_X);
   Matrix<float> B(openCLInfo, rowMajor, h_B);
@@ -82,7 +82,7 @@ int main()
 
   cerr << "HOST:" << endl;
   h_maxY.Set(init);
-  HostMatrix<float> h_Y(VOCABSIZE, 640);
+  HostMatrix<float> h_Y(VOCABSIZE, MAXBATCH);
 
   Affine(h_Y, h_W, h_X, h_B);
   Max(h_maxY, h_Y);

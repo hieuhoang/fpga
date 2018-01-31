@@ -53,12 +53,13 @@ public:
     size_t bytes = size() * sizeof(T);
 
     std::vector<T> vec(size());
+    /*
     std::cerr << "vec.data()="
               << vec.data() << " "
               << data_ << " "
               << bytes << " "
               <<  std::endl;
-
+    */
     HANDLE_ERROR(cudaMemcpy(vec.data(), data_, bytes, cudaMemcpyDeviceToHost));
 
     h_matrix.CopyFrom(vec.data(), colMajor);

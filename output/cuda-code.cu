@@ -15,7 +15,9 @@ __global__
 void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> in)
 {
   assert(out.dim(1) == in.dim(1));
-  for (unsigned col = 0; col < in.dim(1); ++col) {
+
+  unsigned col = blockIdx.x;
+  while (col < in.dim(1)) {
     unsigned maxIndex = 0;
     float value = in(0, col);
 
@@ -30,8 +32,12 @@ void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> i
     MaxY_type &ele = out[col];
     ele.value = value;
     ele.index = maxIndex;
+
+    col += gridDim.x;
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 { 
@@ -71,7 +77,12 @@ void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
                       cudaY.data(), ldc));
 
   CudaMatrix<MaxY_type> cudaMaxY(1, MAXBATCH);
-  gCalcMax<<<1,1>>>(cudaMaxY, cudaY);
+
+  unsigned blocks = std::min((unsigned) MAX_BLOCKS, cudaY.dim(0));
+  unsigned threads = 1; // std::min((unsigned)MAX_THREADS, cudaY.dim(1));
+  cerr << "blocks=" << blocks << " threads=" << threads << endl;
+
+  gCalcMax<<<blocks, threads>>>(cudaMaxY, cudaY);
 
   cudaDeviceSynchronize();
 

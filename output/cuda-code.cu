@@ -15,11 +15,20 @@ void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> i
 {
   assert(out.dim(1) == in.dim(1));
   for (unsigned col = 0; col < in.dim(1); ++col) {
-    unsigned index = 0;
-    float val = in(0, col);
-    for (unsigned row = 1; row < in.dim(0); ++row) {
+    unsigned maxIndex = 0;
+    float maxVal = in(0, col);
 
+    for (unsigned row = 1; row < in.dim(0); ++row) {
+      float val = in(row, col);
+      if (val > maxVal) {
+        maxVal = val;
+        maxIndex = row;
+      }
     }
+
+    MaxY_type &ele = out[col];
+    ele.MaxVal = maxVal;
+    ele.index = maxIndex;
   }
 }
 
@@ -63,6 +72,7 @@ void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
   CudaMatrix<MaxY_type> cudaMaxY(1, 640);
   gCalcMax<<<1,1>>>(cudaMaxY, cudaY);
 
+  cudaDeviceSynchronize();
 
 }
 

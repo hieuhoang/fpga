@@ -4,5 +4,7 @@ emu: OutputLayer.cl
 	aoc -march=emulator -v -DEMULATOR=1 OutputLayer.cl -o fpga.aocx
 
 rtl: OutputLayer.cl
-	aoc -c -v -fpc -fp-relaxed OutputLayer.cl 
-	firefox OutputLayer/reports/report.html &
+	aoc -c -v -fpc -fp-relaxed OutputLayer.cl
+
+fpga: OutputLayer.cl
+	aoc -v -fpc -fp-relaxed OutputLayer.cl -profile

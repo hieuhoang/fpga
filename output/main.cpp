@@ -36,9 +36,9 @@ int main()
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
   HostMatrix<float> h_X(LAYER_DIM, MAXBATCH);
   HostMatrix<float> h_B(VOCABSIZE, 1);
-  HostMatrix<MaxY_type> h_maxY(1, MAXBATCH);
+  HostMatrix<MaxY> h_maxY(1, MAXBATCH);
 
-  MaxY_type init;
+  MaxY init;
   init.value = 3423;
   init.index = 9999;
   h_maxY.Set(init);
@@ -55,7 +55,7 @@ int main()
   h_B.Set(1);
   */
 
-  FPGAMatrix<MaxY_type> maxY(openCLInfo, rowMajor, 1, MAXBATCH);
+  FPGAMatrix<MaxY> maxY(openCLInfo, rowMajor, 1, MAXBATCH);
   FPGAMatrix<float> W(openCLInfo, rowMajor, h_W);
   FPGAMatrix<float> X(openCLInfo, colMajor, h_X);
   FPGAMatrix<float> B(openCLInfo, rowMajor, h_B);

@@ -26,7 +26,7 @@ __kernel void OutputLayer_float(
 	Bpointer_prev = (__global volatile float16 *)B;
 	
 
-	struct MaxY_type MaxYlocal[MAXBATCH];
+	struct MaxY MaxYlocal[MAXBATCH];
 	#pragma unroll 1
 	for (short mi=0; mi < batchsize; mi++){
 		MaxYlocal[mi].value=-MAXFLOAT;

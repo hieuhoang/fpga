@@ -115,11 +115,11 @@ protected:
 /////////////////////////////////////////////////////
 
 void Debug(HostMatrix<float> &matrix);
-void Debug(HostMatrix<MaxY_type> &matrix);
+void Debug(HostMatrix<MaxY> &matrix);
 
 void Random(HostMatrix<float> &matrix);
 void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B);
-void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y);
+void Max(HostMatrix<MaxY> &maxY, const HostMatrix<float> &Y);
 
 
 

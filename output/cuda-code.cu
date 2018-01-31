@@ -12,10 +12,10 @@
 using namespace std;
 
 __global__
-void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> in)
+void gCalcMax(CudaMatrixWrapper<MaxY> out, const CudaMatrixWrapper<float> in)
 {
-  extern __shared__ MaxY_type tmp[];
-  CudaMatrixWrapper<MaxY_type> maxes(tmp, blockDim.x, 1);
+  extern __shared__ MaxY tmp[];
+  CudaMatrixWrapper<MaxY> maxes(tmp, blockDim.x, 1);
 
   assert(out.dim(1) == in.dim(1));
   unsigned rows = in.dim(0);
@@ -26,7 +26,7 @@ void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> i
   unsigned row = threadIdx.x; // vocabInd
   assert(row < rows);
 
-  MaxY_type &ele = maxes[threadIdx.x];
+  MaxY &ele = maxes[threadIdx.x];
   ele.value = in(row, col);
   ele.index = row;
 
@@ -52,16 +52,11 @@ void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> i
     out[col].value = maxes[0].value;
     out[col].index = maxes[0].index;
   }
-  /*
-  MaxY_type &ele = out[col];
-  ele.value = maxVal;
-  ele.index = maxIndex;
-  */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
+void RunCuda(HostMatrix<MaxY> &maxY, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 { 
   cublasHandle_t handle;
   cublasStatus_t stat;
@@ -98,11 +93,11 @@ void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
                       &beta,
                       cudaY.data(), ldc));
 
-  CudaMatrix<MaxY_type> cudaMaxY(1, MAXBATCH);
+  CudaMatrix<MaxY> cudaMaxY(1, MAXBATCH);
 
   unsigned blocks = std::min((unsigned) MAX_BLOCKS, cudaY.dim(1));
   unsigned threads = 1; // std::min((unsigned)MAX_THREADS, cudaY.dim(1));
-  unsigned shared = sizeof(MaxY_type) * threads;
+  unsigned shared = sizeof(MaxY) * threads;
 
   cerr << "blocks=" << blocks << " threads=" << threads << endl;
 

@@ -14,11 +14,11 @@ void Debug(HostMatrix<float> &matrix)
   }  
 }
 
-void Debug(HostMatrix<MaxY_type> &matrix)
+void Debug(HostMatrix<MaxY> &matrix)
 {
   for (unsigned row = 0; row < matrix.dim(0); ++row) {
     for (unsigned col = 0; col < matrix.dim(1); ++col) {
-      const MaxY_type &val = matrix(row, col);
+      const MaxY &val = matrix(row, col);
       cerr << "(" << val.value << "," << val.index << ") ";
     }
     cerr << endl;
@@ -52,7 +52,7 @@ void Affine(HostMatrix<float> &Y, const HostMatrix<float> &W, const HostMatrix<f
   }
 }
 
-void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y)
+void Max(HostMatrix<MaxY> &maxY, const HostMatrix<float> &Y)
 {
   assert(maxY.dim(0) == 1);
   assert(maxY.dim(1) == Y.dim(1));
@@ -67,7 +67,7 @@ void Max(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &Y)
       }
     }
 
-    MaxY_type &ele = maxY[col];
+    MaxY &ele = maxY[col];
     ele.value = max;
     ele.index = argmax;
   }

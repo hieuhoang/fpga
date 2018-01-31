@@ -14,7 +14,7 @@
 #define WLOADTIME ((P * LAYER_DIM) >> 4) //using float16
 #define BLOADTIME (P >> 4) //using float16
 
-struct MaxY_type
+struct MaxY
 {
 	float value;
   unsigned index;

@@ -59,7 +59,7 @@ int main()
   Matrix<float> B(openCLInfo, rowMajor, h_B);
 
   cerr << "CUDA:" << endl;
-  runCuda(h_maxY, h_W, h_X, h_B);
+  RunCuda(h_maxY, h_W, h_X, h_B);
 
   cerr << "FPGA:" << endl;
   h_maxY.Set(init);

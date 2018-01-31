@@ -5,11 +5,25 @@
 #include <cublas_v2.h>
 #include "cuda-code.h"
 #include "cuda-matrix.h"
+#include "cuda-matrix-wrapper.h"
 #include "types-cuda.h"
 
 using namespace std;
 
-void runCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
+__global__
+void gCalcMax(CudaMatrixWrapper<MaxY_type> out, const CudaMatrixWrapper<float> in)
+{
+  assert(out.dim(1) == in.dim(1));
+  for (unsigned col = 0; col < in.dim(1); ++col) {
+    unsigned index = 0;
+    float val = in(0, col);
+    for (unsigned row = 1; row < in.dim(0); ++row) {
+
+    }
+  }
+}
+
+void RunCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 { 
   cublasHandle_t handle;
   cublasStatus_t stat;
@@ -45,6 +59,10 @@ void runCuda(HostMatrix<MaxY_type> &maxY, const HostMatrix<float> &W, const Host
                       cudaX.data(), ldb,
                       &beta,
                       cudaY.data(), ldc));
+
+  CudaMatrix<MaxY_type> cudaMaxY(1, 640);
+  gCalcMax<<<1,1>>>(cudaMaxY, cudaY);
+
 
 }
 

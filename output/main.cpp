@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <boost/timer/timer.hpp>
 #include "host-matrix.h"
 #include "const.h"
 
@@ -45,9 +46,14 @@ int main()
   h_B.Set(1);
   */
 
+  boost::timer::cpu_timer timer;
+
 #ifdef USE_CUDA
   cerr << "CUDA:" << endl;
+  timer.start();
   RunCuda(h_maxY, h_W, h_X, h_B);
+  cerr << "Operation took " << timer.format(2, "%w") << " sec" << endl;
+
   Debug(h_maxY);
 #endif
 

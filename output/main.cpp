@@ -3,11 +3,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include "host-matrix.h"
+#include "const.h"
+
+#ifndef NO_CL
 #include "types-fpga.h"
 #include "kernel.h"
 #include "fpga-matrix.h"
-#include "host-matrix.h"
-#include "const.h"
+#endif
 
 #ifdef USE_CUDA
 #include "cuda-code.h"
@@ -19,19 +22,6 @@ using namespace std;
 int main()
 {
   cerr << "Starting..." << endl;
-
-  OpenCLInfo openCLInfo;
-
-  openCLInfo.context = CreateContext(100, openCLInfo.devices, openCLInfo.numDevices);
-  cerr << "CreateContext done" << endl;
-
-  openCLInfo.device = openCLInfo.devices[0];
-
-  openCLInfo.commands = CreateCommandQueue(openCLInfo);
-  cerr << "CreateCommandQueue done" << endl;
-
-  CreateProgram(openCLInfo, "kernels/OutputLayer.aocx");
-  cerr << "CreateProgram done" << endl;
 
   HostMatrix<float> h_W(VOCABSIZE, LAYER_DIM);
   HostMatrix<float> h_X(LAYER_DIM, MAXBATCH);
@@ -55,19 +45,35 @@ int main()
   h_B.Set(1);
   */
 
-  FPGAMatrix<MaxY> maxY(openCLInfo, rowMajor, 1, MAXBATCH);
-  FPGAMatrix<float> W(openCLInfo, rowMajor, h_W);
-  FPGAMatrix<float> X(openCLInfo, colMajor, h_X);
-  FPGAMatrix<float> B(openCLInfo, rowMajor, h_B);
-
 #ifdef USE_CUDA
   cerr << "CUDA:" << endl;
   RunCuda(h_maxY, h_W, h_X, h_B);
   Debug(h_maxY);
 #endif
 
+#ifndef NO_CL
   cerr << "FPGA:" << endl;
   h_maxY.Set(init);
+
+
+  OpenCLInfo openCLInfo;
+
+  openCLInfo.context = CreateContext(100, openCLInfo.devices, openCLInfo.numDevices);
+  cerr << "CreateContext done" << endl;
+
+  openCLInfo.device = openCLInfo.devices[0];
+
+  openCLInfo.commands = CreateCommandQueue(openCLInfo);
+  cerr << "CreateCommandQueue done" << endl;
+
+  CreateProgram(openCLInfo, "kernels/OutputLayer.aocx");
+  cerr << "CreateProgram done" << endl;
+  
+  FPGAMatrix<MaxY> maxY(openCLInfo, rowMajor, 1, MAXBATCH);
+  FPGAMatrix<float> W(openCLInfo, rowMajor, h_W);
+  FPGAMatrix<float> X(openCLInfo, colMajor, h_X);
+  FPGAMatrix<float> B(openCLInfo, rowMajor, h_B);
+  
   cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
   CallOpenCL(kernel, openCLInfo,
   			    W.data(), 
@@ -79,7 +85,8 @@ int main()
 
   maxY.CopyTo(h_maxY);
   Debug(h_maxY);
-
+#endif
+  
   cerr << "HOST:" << endl;
   h_maxY.Set(init);
   HostMatrix<float> h_Y(VOCABSIZE, MAXBATCH);

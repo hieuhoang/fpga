@@ -52,7 +52,7 @@ int main()
   cerr << "CUDA:" << endl;
   timer.start();
   RunCuda(h_maxY, h_W, h_X, h_B);
-  cerr << "Operation took " << timer.format(2, "%w") << " sec" << endl;
+  cerr << "CUDA took " << timer.format(2, "%w") << " sec" << endl;
 
   Debug(h_maxY);
 #endif
@@ -81,6 +81,8 @@ int main()
   FPGAMatrix<float> B(openCLInfo, rowMajor, h_B);
   
   cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
+
+  timer.start();
   CallOpenCL(kernel, openCLInfo,
   			    W.data(), 
 						X.data(), 
@@ -88,6 +90,7 @@ int main()
 						maxY.data(),
 						X.dim(1));
   CheckError( clFinish(openCLInfo.commands) );
+  cerr << "OpenCL took " << timer.format(2, "%w") << " sec" << endl;
 
   maxY.CopyTo(h_maxY);
   Debug(h_maxY);
@@ -97,8 +100,11 @@ int main()
   h_maxY.Set(init);
   HostMatrix<float> h_Y(VOCABSIZE, MAXBATCH);
 
+  timer.start();
   Affine(h_Y, h_W, h_X, h_B);
   Max(h_maxY, h_Y);
+  cerr << "CPU took " << timer.format(2, "%w") << " sec" << endl;
+
   Debug(h_maxY);
 
   cerr << "Finished" << endl;

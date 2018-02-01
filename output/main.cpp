@@ -79,7 +79,9 @@ int main()
   
   cl_kernel kernel = CreateKernel("OutputLayer_float", openCLInfo);
 
+  CheckError( clFinish(openCLInfo.commands) );
   timer.start();
+
   CallOpenCL(kernel, openCLInfo,
   			    W.data(), 
 						X.data(), 

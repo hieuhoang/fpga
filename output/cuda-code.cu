@@ -1,3 +1,4 @@
+#include <boost/timer/timer.hpp>
 #include <cstddef>
 #include <stdio.h>
 #include <iostream>
@@ -84,6 +85,11 @@ void RunCuda(HostMatrix<MaxY> &maxY, const HostMatrix<float> &W, const HostMatri
   CudaMatrix<float> cudaX(X);
   CudaMatrix<float> cudaB(B);
   CudaMatrix<float> cudaY(VOCABSIZE, MAXBATCH);
+  CudaMatrix<MaxY> cudaMaxY(1, MAXBATCH);
+
+  cudaDeviceSynchronize();
+  boost::timer::cpu_timer timer;
+  timer.start();
 
   HANDLE_ERROR_CUBLAS(cublasSgemm(handle, opA, opB,
                       m, n, k,
@@ -92,8 +98,6 @@ void RunCuda(HostMatrix<MaxY> &maxY, const HostMatrix<float> &W, const HostMatri
                       cudaX.data(), ldb,
                       &beta,
                       cudaY.data(), ldc));
-
-  CudaMatrix<MaxY> cudaMaxY(1, MAXBATCH);
 
   unsigned blocks = std::min((unsigned) MAX_BLOCKS, cudaY.dim(1));
   unsigned threads = 1; // std::min((unsigned)MAX_THREADS, cudaY.dim(1));
@@ -104,6 +108,7 @@ void RunCuda(HostMatrix<MaxY> &maxY, const HostMatrix<float> &W, const HostMatri
   gCalcMax<<<blocks, threads, shared>>>(cudaMaxY, cudaY);
 
   cudaDeviceSynchronize();
+  cerr << "CUDA took " << timer.format(2, "%w") << " sec" << endl;
 
   cudaMaxY.CopyTo(maxY);
 }

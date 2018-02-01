@@ -50,10 +50,7 @@ int main()
 
 #ifdef USE_CUDA
   cerr << "CUDA:" << endl;
-  timer.start();
   RunCuda(h_maxY, h_W, h_X, h_B);
-  cerr << "CUDA took " << timer.format(2, "%w") << " sec" << endl;
-
   Debug(h_maxY);
 #endif
 

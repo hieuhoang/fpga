@@ -4,7 +4,7 @@
 #define EMULATOR 0
 #endif
 
-#define VOCABSIZE 384 //85120 //384  //good multiple of 16 and 128
+#define VOCABSIZE 85120 //85120 //384  //good multiple of 16 and 128
 #define LAYER_DIM 512 // assuming to be multiple of 16
 #define MAXBATCH 1000
 

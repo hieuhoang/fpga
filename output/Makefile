@@ -12,7 +12,7 @@ rtl:
 	$(MAKE) -C kernels rtl
 
 fpga: 
-	$(MAKE) -C kernels fpga
+	#$(MAKE) -C kernels fpga
 	g++ -std=c++11 main.cpp kernel.cpp debug-devices.cpp fpga-matrix.cpp host-matrix.cpp -lboost_timer -lboost_chrono -lboost_system $(FPGA_INCLUDE_FLAGS) $(FPGA_LINK_FLAGS) -Wl,--no-as-needed -lalteracl -lelf
 
 emu-cuda:

@@ -150,7 +150,10 @@ void RunTensorCores()
 
    // curand doesn't currently support fp16 so we generate in fp32 and convert to fp16.
    convertFp32ToFp16 <<< (MATRIX_M * MATRIX_K + 255) / 256, 256 >>> (a_fp16, a_fp32, MATRIX_M * MATRIX_K);
+   HANDLE_ERROR(cudaGetLastError());
+
    convertFp32ToFp16 <<< (MATRIX_K * MATRIX_N + 255) / 256, 256 >>> (b_fp16, b_fp32, MATRIX_K * MATRIX_N);
+   HANDLE_ERROR(cudaGetLastError());
 
    HANDLE_ERROR_CURAND(curandGenerateUniform(gen, c, MATRIX_M * MATRIX_N));
 
@@ -180,6 +183,7 @@ void RunTensorCores()
    printf("Running with wmma...\n");
    HANDLE_ERROR(cudaEventRecord(startWMMA));
    wmma_example <<< gridDim, blockDim >>> (a_fp16, b_fp16, c_wmma, MATRIX_M, MATRIX_N, MATRIX_K, alpha, beta);
+   HANDLE_ERROR(cudaGetLastError());
    HANDLE_ERROR(cudaEventRecord(stopWMMA));
 
 

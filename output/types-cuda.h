@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cuda.h>
 #include <cublas_v2.h>
+#include <curand.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +12,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void HandleError(cudaError_t err, const char *file, int line ) {
+inline void HandleError(cudaError_t err, const char *file, int line ) {
   if (err != cudaSuccess) {
     std::cerr << "ERROR: " << cudaGetErrorString(err) << " in " << file << " at line " << line << std::endl;
     exit( EXIT_FAILURE );
@@ -22,7 +23,7 @@ void HandleError(cudaError_t err, const char *file, int line ) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void HandleErrorCublas(cublasStatus_t err, const char *file, int line ) {
+inline void HandleErrorCublas(cublasStatus_t err, const char *file, int line ) {
   if (err != CUBLAS_STATUS_SUCCESS) {
     std::cerr << "CUBLAS ERROR: " << err << " in " << file << " at line " << line << std::endl;
     exit( EXIT_FAILURE );
@@ -33,4 +34,10 @@ void HandleErrorCublas(cublasStatus_t err, const char *file, int line ) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define HANDLE_ERROR_CURAND(stat) { curandErrCheck_((stat), __FILE__, __LINE__); }
 
+inline void curandErrCheck_(curandStatus_t stat, const char *file, int line) {
+   if (stat != CURAND_STATUS_SUCCESS) {
+      fprintf(stderr, "cuRand Error: %d %s %d\n", stat, file, line);
+   }
+}

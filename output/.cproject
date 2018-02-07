@@ -44,6 +44,7 @@
 								</option>
 								<option id="nvcc.linker.option.libs.1414775991" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="cublas"/>
+									<listOptionValue builtIn="false" value="curand"/>
 									<listOptionValue builtIn="false" value="boost_timer"/>
 									<listOptionValue builtIn="false" value="boost_chrono"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
@@ -69,7 +70,11 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="com.nvidia.cuda.ide.build.project.ICudaProjectConfiguration">
-				<editor-arch major="3" minor="0"/>
+				<editor-arch major="7" minor="0"/>
+				<executable>
+					<ptx major="7" minor="0"/>
+					<sass major="7" minor="0"/>
+				</executable>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>

@@ -9,6 +9,7 @@
 #include "cuda-matrix-wrapper.h"
 #include "types-cuda.h"
 #include "const.h"
+#include "tensor-cores.h"
 
 using namespace std;
 
@@ -53,14 +54,6 @@ void gCalcMax(CudaMatrixWrapper<MaxY> out, const CudaMatrixWrapper<float> in)
     out[col].value = maxes[0].value;
     out[col].index = maxes[0].index;
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-void RunTensorCores()
-{
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +112,8 @@ void RunCuda(HostMatrix<MaxY> &maxY, const HostMatrix<float> &W, const HostMatri
   cerr << "CUDA took " << timer.format(2, "%w") << " sec" << endl;
 
   cudaMaxY.CopyTo(maxY);
+
+  RunTensorCores();
 }
 
 

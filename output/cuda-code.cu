@@ -57,6 +57,14 @@ void gCalcMax(CudaMatrixWrapper<MaxY> out, const CudaMatrixWrapper<float> in)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+void RunTensorCores()
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 void RunCuda(HostMatrix<MaxY> &maxY, const HostMatrix<float> &W, const HostMatrix<float> &X, const HostMatrix<float> &B)
 { 
   cublasHandle_t handle;

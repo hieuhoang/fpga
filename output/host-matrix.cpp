@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <cstdlib>
 #include "host-matrix.h"
 
 using namespace std;

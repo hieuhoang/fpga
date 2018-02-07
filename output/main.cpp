@@ -15,6 +15,7 @@
 
 #ifdef USE_CUDA
 #include "cuda-code.h"
+#include "tensor-cores.h"
 #endif
 
 using namespace std;
@@ -52,6 +53,8 @@ int main()
   cerr << "CUDA:" << endl;
   RunCuda(h_maxY, h_W, h_X, h_B);
   Debug(h_maxY);
+
+  RunTensorCores();
 #endif
 
 #ifndef NO_CL

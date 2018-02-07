@@ -8,10 +8,12 @@ using namespace nvcuda;
 
 
 // Must be multiples of 16 for wmma code to work
-#define MATRIX_M 16384
-#define MATRIX_N 16384
-#define MATRIX_K 16384
-
+//#define MATRIX_M 16384
+//#define MATRIX_N 16384
+//#define MATRIX_K 16384
+#define MATRIX_M 160
+#define MATRIX_N 160
+#define MATRIX_K 160
 
 
 // The only dimensions currently supported by WMMA

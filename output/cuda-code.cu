@@ -9,7 +9,6 @@
 #include "cuda-matrix-wrapper.h"
 #include "types-cuda.h"
 #include "const.h"
-#include "tensor-cores.h"
 
 using namespace std;
 
@@ -113,7 +112,6 @@ void RunCuda(HostMatrix<MaxY> &maxY, const HostMatrix<float> &W, const HostMatri
 
   cudaMaxY.CopyTo(maxY);
 
-  RunTensorCores();
 }
 
 
